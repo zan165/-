@@ -10,7 +10,7 @@ RunOnce=1
 EnableWindow=
 MacroID=5df7f713-f770-44de-8331-d1bc8eb60e53
 Description=三国志战略版
-Enable=0
+Enable=1
 AutoRun=0
 [Repeat]
 Type=0
@@ -261,7 +261,8 @@ Sub 注册佐晓鹭
 End Sub
 
 Function 获取界面名
-	//判断当前界面是否是主界面
+
+	//是否是主界面
 	dm_ret = dm.FindPic(0,0,300,300,"D:\ajjl\zc.bmp||D:\ajjl\招募.bmp","000000",0.9,0,intX,intY)
 	If intX >= 0 and intY >= 0 Then
     	TracePrint "找到界面"
@@ -298,10 +299,45 @@ Function 获取界面名
 	End If
 	
 	
+	dm_ret = dm.FindPic(0,0,200,200,"D:\ajjl\zf.bmp","000000",0.9,0,intX,intY)
+	If intX >= 0 and intY >= 0 Then
+    	TracePrint "找到界面"
+    	当前界面 = "战法界面"
+    	Exit Function
+	End If
+	
+	
+	dm_ret = dm.FindPic(0,0,200,200,"D:\ajjl\jz.bmp","000000",0.9,0,intX,intY)
+	If intX >= 0 and intY >= 0 Then
+    	TracePrint "找到界面"
+    	当前界面 = "主城界面"
+    	Exit Function
+	End If
+	
+	
+	
+	dm_ret = dm.FindPic(0,0,1200,600,"D:\ajjl\新手引导1.bmp","000000",0.9,0,intX,intY)
+	If intX >= 0 and intY >= 0 Then
+    	TracePrint "找到新手引导1"
+    	当前界面 = "新手引导1"
+    	Exit Function
+	End If
+	
+	
 End Function
 
 
 Sub 判断当前界面
+	dm_ret = dm.FindPic(0,0,1200,800,"D:\ajjl\下一步.bmp","000000",0.9,0,intX,intY)
+	If intX >= 0 and intY >= 0 Then
+    	TracePrint "找到下一步按钮"
+    	dm.moveTo intX, intY
+    	Delay 1000
+    	dm.leftclick
+    	
+	End If
+	
+	Delay 2000
 	
 	获取界面名
 	TracePrint "当前界面名字是"&当前界面
@@ -309,7 +345,7 @@ Sub 判断当前界面
 End Sub
 
 Sub 跳转回主界面
-	dm_ret = dm.FindPic(1000,0,1190,150,"D:\ajjl\fhan.bmp||D:\ajjl\fhan2.bmp||D:\ajjl\fhan3.bmp||D:\ajjl\xan.bmp||D:\ajjl\x2an.bmp","000000",0.9,0,intX,intY)
+	dm_ret = dm.FindPic(1000,0,1190,150,"D:\ajjl\fhan.bmp||D:\ajjl\fhan2.bmp||D:\ajjl\fhan3.bmp||D:\ajjl\fhan4.bmp||D:\ajjl\xan.bmp||D:\ajjl\x2an.bmp","000000",0.9,0,intX,intY)
 	If intX >= 0 and intY >= 0 Then
     	TracePrint "找到返回按钮"
     	dm.moveTo intX, intY
@@ -323,6 +359,8 @@ Sub 跳转回主界面
 	判断当前界面
 	If 当前界面 = "主界面" Then 
 		TracePrint "已返回主界面"
+		dm.moveto 1111, 88
+		dm.leftclick
 	Else 
 		TracePrint "不在主界面，需要跳转回主界面"
 		跳转回主界面
@@ -440,7 +478,7 @@ Sub 攻占(aimx,aimy)
 	End If
 	Delay 1500
 	
-	dm_ret = dm.FindPic(0,0,1166,757,"D:\ajjl\曹休.bmp","000000",0.9,0,intX,intY)
+	dm_ret = dm.FindPic(0,0,1166,757,"D:\ajjl\待命.bmp||D:\ajjl\待命1.bmp||D:\ajjl\待命2.bmp","000000",0.9,0,intX,intY)
 	If intX >= 0 and intY >= 0 Then
     	TracePrint "找到攻占按钮"
     	dm.moveTo intX, intY
@@ -448,7 +486,7 @@ Sub 攻占(aimx,aimy)
     	dm.leftclick
     	
     Else 
-    	TracePrint "没有找到曹休按钮"
+    	TracePrint "没有找到待命按钮"
     	EndScript
 	End If
 	
@@ -518,8 +556,7 @@ End Sub
 
 Function 移动到(定位)
 	Delay 1500
-	
-	dm_ret = dm.FindPic(0,0,1166,670,"D:\ajjl\"& 定位 &".bmp","000000",0.9,0,intX,intY)
+	dm_ret = dm.FindPic(0,0,1200,800,"D:\ajjl\"& 定位 &".bmp","000000",0.9,0,intX,intY)
 	If intX >= 0 and intY >= 0 Then
     	TracePrint "找到"&定位
     	dm.moveTo intX, intY
@@ -530,6 +567,7 @@ Function 移动到(定位)
     	TracePrint "没有找到"&定位
     	
 	End If
+	Delay 50
 End Function
 
 Sub 攻占一块土地(aimx,aimy)
@@ -543,6 +581,48 @@ Sub 攻占一块土地(aimx,aimy)
 	End If
 	
 End Sub
+
+Sub 从主城占领一块土地(aimx,aimy)
+	补充队伍一兵力 
+	跳转回主界面
+	攻占一块土地 aimx, aimy
+End Sub
+
+Sub 进入主城
+	跳转回主界面 
+	
+	//点home按钮	
+	鼠标点击 1050, 130
+	///点主城
+	鼠标点击 585, 346
+	
+	当前界面 = "主城界面"
+End Sub
+
+Sub 进入队伍一
+	进入主城 
+	点击 "一队"
+	
+End Sub
+
+Sub 补充队伍一兵力
+	进入队伍一 
+	点击 "快速分兵"
+	点击 "确认分兵"
+End Sub
+
+
+Sub 进入建筑界面
+	进入主城 
+	点击 "jz"
+	当前界面 = "建筑界面"
+End Sub
+
+Sub 全力征兵
+	进入主城 
+	点击 "满征"
+End Sub
+
 
 //
 Sub 一个方向铺路(nowX,nowY,lastStep,方向)
@@ -655,6 +735,501 @@ Sub 获取地周围的几块地的信息(nowx, nowy)
 	
 End Sub
 
+Sub 做新手引导1
+//
+////对话
+//	For 10
+//	
+//	
+//	Delay 1000
+//	
+//	dm.moveto 1100 , 600
+//	dm.leftclick 
+//	
+//	Next
+//
+//
+////点击招募
+//	dm.moveto 840 ,700
+//	
+//	Delay 1000
+//	dm.leftclick
+////点击新手招募
+//	dm.moveto 724 ,569
+//	
+//	Delay 1000
+//	dm.leftclick
+//
+////点击两次
+
+//dm.moveto 1114, 20
+//
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+		
+		//返回
+//dm.moveto 1114, 20
+//
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+
+//
+//dm.moveto 1114, 20
+//
+//		Delay 1100
+//		dm.leftclick 
+	
+	/////点主城
+	
+//dm.moveto 560, 300
+//
+//		Delay 1100
+//		dm.leftclick 
+
+
+////点第一个队伍
+//dm.moveto 110, 680
+//
+//		Delay 1100
+//		dm.leftclick 
+//		
+		
+		////第一个武将位置
+
+//dm.moveto 394, 292
+//		Delay 1100
+//		dm.leftclick 
+		
+		
+//dm.moveto 1139, 209
+//		Delay 1100
+//		dm.leftclick 
+		
+//		////第二个武将位置
+//
+//dm.moveto 586, 304
+//		Delay 1100
+//		dm.leftclick 
+//
+//dm.moveto 1139, 282
+//		Delay 1100
+//		dm.leftclick 
+
+//   快速分兵
+//dm.moveto 131, 724
+//		Delay 1100
+//		dm.leftclick 
+		
+//			//确认
+//dm.moveto 1033, 647
+//		Delay 1100
+//		dm.leftclick
+//		
+		
+		
+//				//返回
+//dm.moveto 1114, 20
+//
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+
+
+//点击攻占按钮
+//:findgongji
+//
+//	dm_ret = dm.FindPic(0,0,1166,670,"D:\ajjl\gzan.bmp||D:\ajjl\刀.bmp","000000",0.9,0,intX,intY)
+//	If intX >= 0 and intY >= 0 Then
+//    	TracePrint "找到攻占按钮"
+//    	dm.moveTo intX, intY
+//    	Delay 1000
+//    	dm.leftclick
+//    	
+//    Else 
+//    	Delay 1500
+//    	
+//	End If
+//	Delay 1500
+//
+
+//dm.moveto 600, 680
+//
+//		Delay 1100
+//		dm.leftclick 
+		
+		//
+//dm.moveto 930, 510
+//
+//		Delay 1100
+//		dm.leftclick
+ 
+ 
+//	移动到 "跳过"
+//	Delay 1000
+//	dm.leftclick
+//		
+//		
+//	Delay 1000
+//	移动到 "获得"
+//	Delay 1000
+//	dm.leftclick
+//	Delay 1000
+//	dm.leftclick
+//	Delay 1000
+//	dm.leftclick
+	
+	
+//		移动到 "回城"
+//	Delay 1000
+//	dm.leftclick 
+//	
+	
+	
+				
+//dm.moveto 1114, 20
+//
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+//		
+//		Delay 5000
+//		
+//dm.moveto 1114, 20
+//
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+	
+	
+		/////点主城
+	
+//dm.moveto 585, 346
+//
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 800
+//dm.moveto 585, 346
+//
+//		Delay 1100
+//		dm.leftclick 
+
+	
+//点第一个队伍
+//dm.moveto 110, 680
+//
+//		Delay 1100
+//		dm.leftclick 
+		//第一武将加号
+//dm.moveto 1072, 423
+//
+//		Delay 1100
+//		dm.leftclick 
+//		
+
+
+//dm.moveto 920, 350
+//
+//		Delay 1100
+//		dm.leftclick 
+	
+//	dm.moveto 1114, 20
+//
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+//		
+//		Delay 5000
+		
+
+//dm.moveto 580, 343
+//
+//		Delay 1100
+//		dm.leftclick 
+	
+//	//点击行军按钮
+//
+//
+//	dm_ret = dm.FindPic(0,0,1166,670,"D:\ajjl\行军.bmp||D:\ajjl\马.bmp","000000",0.9,0,intX,intY)
+//	If intX >= 0 and intY >= 0 Then
+//    	TracePrint "找到行军按钮"
+//    	dm.moveTo intX, intY
+//    	Delay 1000
+//    	dm.leftclick
+//    	
+//    Else 
+//    TracePrint "没有找到行军按钮"
+//    	Delay 1500
+//    	
+//	End If
+//	Delay 1500
+
+	
+//dm.moveto 600, 680
+//
+//		Delay 1100
+//		dm.leftclick 
+	
+	
+//	dm.moveto 930, 510
+//
+//		Delay 1100
+//		dm.leftclick
+ 
+// Delay 5000
+// 
+//		移动到 "跳过"
+//	Delay 1000
+//	dm.leftclick
+//	
+
+
+//	Delay 1000
+//	移动到 "获得"
+//	Delay 1000
+//	dm.leftclick
+//	Delay 1000
+//	dm.leftclick
+//	Delay 1000
+//	dm.leftclick
+//	
+//	
+//		移动到 "回城"
+//	Delay 1000
+//	dm.leftclick 
+	
+//		dm.moveto 1114, 20
+//
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+//		
+//		Delay 5000
+
+
+
+//	
+//	///点主城
+//	
+//dm.moveto 585, 346
+//
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 800
+//dm.moveto 585, 346
+//
+//		Delay 1100
+//		dm.leftclick 
+//
+//
+//点第一个队伍
+//dm.moveto 110, 680
+//
+//		Delay 1100
+//		dm.leftclick 
+//		
+//		
+//		//第一个武将位置
+//
+//dm.moveto 394, 292
+//		Delay 1100
+//		dm.leftclick 
+//		
+//		
+//dm.moveto 1139, 209
+//		Delay 1100
+//		dm.leftclick 
+
+
+//		移动到 "下阵"
+//
+//		Delay 1100
+//		dm.leftclick 
+		
+		
+//		移动到 "确认"
+//
+//		Delay 1100
+//		dm.leftclick 
+
+
+
+		////第一个武将位置
+
+//dm.moveto 394, 292
+//		Delay 1100
+//		dm.leftclick 
+		
+		
+		//上阵第二个武将 关平
+//dm.moveto 1139, 282
+//		Delay 1100
+//		dm.leftclick 
+//
+
+
+		//返回
+//dm.moveto 1114, 20
+//
+//		Delay 1100
+//		dm.leftclick 
+//		Delay 1100
+//		dm.leftclick 
+//
+
+
+
+
+
+End Sub
+
+
+
+Sub 点击招募按钮
+	
+	
+	
+End Sub
+
+
+Sub 升级主城仓库
+		
+	///点主城
+	
+dm.moveto 585, 346
+
+		Delay 1100
+		dm.leftclick 
+		Delay 800
+dm.moveto 585, 346
+
+		Delay 1100
+		dm.leftclick 
+
+	
+dm.moveto 355, 228
+
+		Delay 1100
+		dm.leftclick 
+
+
+//点4下  跳过引导
+dm.moveto 1000, 600
+
+		Delay 1100
+		dm.leftclick 
+	
+
+		Delay 1100
+		dm.leftclick 
+		
+
+		Delay 1100
+		dm.leftclick 
+
+		Delay 1100
+		dm.leftclick 
+
+	
+//	选中主城
+dm.moveto 110, 370
+
+		Delay 1100
+		dm.leftclick 
+	
+	
+	移动到 "升级"
+	dm.leftclick 
+	Delay 1000
+	//选中仓库
+dm.moveto 600, 130
+
+		Delay 1100
+		dm.leftclick 
+	
+	
+	移动到 "建造"
+	dm.leftclick 	
+	
+	
+	跳转回主界面
+End Sub
+
+Sub 升级农场石头
+	进入建筑界面
+		
+		
+//	选中农场
+dm.moveto 600, 300
+
+		Delay 1100
+		dm.leftclick 
+	
+	
+	点击 "建造"
+	点击 "升级"
+	Delay 1000
+	//选中石头
+dm.moveto 760, 300
+
+		Delay 1100
+		dm.leftclick 
+	
+	
+	点击 "建造"	
+	点击 "升级"
+	
+	跳转回主界面
+	
+End Sub
+
+
+
+Sub 点击(位置)
+	移动到 位置
+	dm.leftclick 	
+End Sub
+
+Sub 鼠标点击(坐标X, 坐标Y)
+	Delay 50
+	dm.moveto 坐标X,坐标Y
+	dm.leftclick 
+	Delay 50
+End Sub
+
+
 Sub main
 	注册大漠 
 	获取系统配置
@@ -662,9 +1237,37 @@ Sub main
 	配置游戏窗口  
 	判断当前界面 
 	注册佐晓鹭
-	获取地周围的几块地的信息 381, 1439
+//	获取地周围的几块地的信息 381, 1439
 	// 左上 380 1439  左下 380 1439  下 381 1440  右下382 1440  右下382 1439  上 381, 1438  
 //	获取位置信息
+	当前任务 = "征兵"
+
+	If 当前界面 = "新手引导1" Then 
+		做新手引导1
+	End If
+	If 当前任务 = "主城引导" Then
+	
+		升级主城仓库
+	End If
+	
+	If 当前任务 = "升级资源1" Then
+	升级农场石头 
+	End If
+	
+	
+	If 当前任务 = "征兵" Then
+	全力征兵 
+	End If
+	
+	
+//	从主城占领一块土地 510 ,1462
+	
+	
+//	//网络调用ocr
+//	txt = Plugin.ZXLOCR.QSOCR(951,63,1177,161, 0)
+//	TracePrint txt
+//	
+	
 	
 	
 End Sub
