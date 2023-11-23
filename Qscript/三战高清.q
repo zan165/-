@@ -8,9 +8,9 @@ StopHotkey=123
 StopHotkeyMod=0
 RunOnce=1
 EnableWindow=
-MacroID=5df7f713-f770-44de-8331-d1bc8eb60e53
-Description=三国志战略版
-Enable=0
+MacroID=328ca855-ffc1-4b15-9cc2-c838a264ec82
+Description=三战高清
+Enable=1
 AutoRun=0
 [Repeat]
 Type=0
@@ -174,6 +174,42 @@ Sub 注册大漠()
 	End If
 End Sub
 
+Sub 注册佐晓鹭
+
+	TracePrint "开始注册佐晓鹭"
+	//佐晓鹭完全免费版 不用注册了
+//	text = Plugin.ZXLOCR.reg("TEST")
+	
+//	TracePrint "注册佐晓鹭: "&text
+	
+	
+	TracePrint Plugin.ZXLOCR.Ver
+	
+//	最新版下载地址
+//	TracePrint Plugin.ZXLOCR.GXVer
+	
+	
+//	本地服务器查多行文字
+//	text =  Plugin.ZXLOCR.TTOCR(4,77,1158,673,0)
+//	TracePrint text
+	
+//	本地查单行
+	
+//	TEXT = Plugin.ZXLOCR.LDOCR("F:\OCR插件永久免费版\OCRdat.dll", 6)
+//	
+//	TracePrint text
+//	
+//	txt = Plugin.ZXLOCR.MYOCR(400,25,500,54, 0)
+//	TracePrint txt
+	
+	//网络调用ocr
+//	txt = Plugin.ZXLOCR.QSOCR(400,25,500,54, 0)
+//	TracePrint txt
+//	
+
+End Sub
+
+
 Sub 判断三国志是否已打开
 		//前台模式
 hwnd = dm.FindWindow("", "三国志·战略版")
@@ -225,40 +261,6 @@ Sub 配置游戏窗口
 End Sub
 
 
-Sub 注册佐晓鹭
-
-	TracePrint "开始注册佐晓鹭"
-	//佐晓鹭完全免费版 不用注册了
-//	text = Plugin.ZXLOCR.reg("TEST")
-	
-//	TracePrint "注册佐晓鹭: "&text
-	
-	
-	TracePrint Plugin.ZXLOCR.Ver
-	
-//	最新版下载地址
-//	TracePrint Plugin.ZXLOCR.GXVer
-	
-	
-//	本地服务器查多行文字
-//	text =  Plugin.ZXLOCR.TTOCR(4,77,1158,673,0)
-//	TracePrint text
-	
-//	本地查单行
-	
-//	TEXT = Plugin.ZXLOCR.LDOCR("F:\OCR插件永久免费版\OCRdat.dll", 6)
-//	
-//	TracePrint text
-//	
-//	txt = Plugin.ZXLOCR.MYOCR(400,25,500,54, 0)
-//	TracePrint txt
-	
-	//网络调用ocr
-//	txt = Plugin.ZXLOCR.QSOCR(400,25,500,54, 0)
-//	TracePrint txt
-//	
-
-End Sub
 
 Function 获取界面名
 	//判断当前界面是否是主界面
@@ -569,50 +571,19 @@ Sub 一个方向铺路(nowX,nowY,lastStep,方向)
 	
 End Sub
 
-Sub 获取位置信息(aimx, aimy)
+Sub 获取位置信息
+//	移动到 "1级文字"
 
-
-//	跳转到坐标 381, 1439
-	跳转到坐标 aimx, aimy
-	Delay 1000
-	txt = Plugin.ZXLOCR.QSOCR(5,76,1176,668, 0)
-//	TracePrint txt
-
-	Dim 土地(10)
-	土地(0)="空地"
-	土地(1)="1级"
-	土地(2)="2级"
-	土地(3)="3级"
-	土地(4)="4级"
-	土地(5)="5级"
-	土地(6)="6级"
-	土地(7)="7级"
-	土地(8)="8级"
-	土地(9)="9级"
-	土地(10)="10级"
-
-
-	地块等级 = null
+	FindPic 0,0,1024,768,"D:\ajjl\数字1.bmp",0.9,intX,intY
+	If intX > 0 And intY > 0 Then 
+	TracePrint  "数字1 文字"
+	dm.moveto intX, intY
 	
-	地块主人 = null
-	地块兵种 = null
-	index = 0
-	For 11
-		
-
-	If InStr(txt, 土地(index)) > 0 Then 
-		TracePrint "这是"&土地(index)&"地"
-		地块等级 = index
-		Exit For
-		
+	Else 
+	TracePrint "没有找到"
 	End If
 
-	index=index+1	
-	Next
 End Sub
-
-
-
 
 Sub 获取地周围的几块地的信息(nowx, nowy)
 	//381, 1439
@@ -622,32 +593,32 @@ Sub 获取地周围的几块地的信息(nowx, nowy)
 	Dim 左上(1), 左下(1), 下(1), 右下(1), 右上(1), 上(1)
 	左上(0) = nowx - 1
 	左上(1) = nowy
-	
-	获取位置信息 左上(0), 左上(1) 
+	跳转到坐标 左上(0), 左上(1)
+	获取位置信息
 	
 	
 	左下(0) = nowx - 1
 	左下(1) = nowy + 1
-	获取位置信息 左下(0) ,左下(1)
+	跳转到坐标 左下(0) ,左下(1)
 	
 	
 	下(0) = nowx
 	下(1) = nowy + 1
-	获取位置信息 下(0) ,下(1)
+	跳转到坐标 下(0) ,下(1)
 	
 	
 	右下(0) = nowx + 1
 	右下(1) = nowy + 1
-	获取位置信息 右下(0) ,右下(1)
+	跳转到坐标 右下(0) ,右下(1)
 	
 	
 	右上(0) = nowx + 1
 	右上(1) = nowy
-	获取位置信息 右上(0) ,右上(1)
+	跳转到坐标 右上(0) ,右上(1)
 	
 	上(0) = nowx 
 	上(1) = nowy - 1
-	获取位置信息 上(0) ,上(1)
+	跳转到坐标 上(0) ,上(1)
 	
 	
 	 
@@ -656,13 +627,14 @@ Sub 获取地周围的几块地的信息(nowx, nowy)
 End Sub
 
 Sub main
-	注册大漠 
+	注册大漠 	
 	获取系统配置
 	判断三国志是否已打开 
-	配置游戏窗口  
-	判断当前界面 
+	配置游戏窗口 
 	注册佐晓鹭
-	获取地周围的几块地的信息 381, 1439
+	
+//	判断当前界面 
+//	获取地周围的几块地的信息 381, 1439
 	// 左上 380 1439  左下 380 1439  下 381 1440  右下382 1440  右下382 1439  上 381, 1438  
 //	获取位置信息
 	
