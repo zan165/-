@@ -37,7 +37,10 @@ Dim 当前界面
 Dim presentLevel
 Dim presentOwn
 Dim presentEnemy
+Dim 主城坐标(1)
+Dim 当前坐标(1)
 
+isFindZhuCheng = false
 
 Call main
 
@@ -359,13 +362,45 @@ Sub 跳转回主界面
 	判断当前界面
 	If 当前界面 = "主界面" Then 
 		TracePrint "已返回主界面"
-		dm.moveto 1111, 88
-		dm.leftclick
+		
 	Else 
 		TracePrint "不在主界面，需要跳转回主界面"
 		跳转回主界面
 	End If 
 End Sub
+
+Sub 主界面点坐标
+	判断当前界面 
+	
+	If 当前界面 = "主界面" Then 
+		TracePrint "已在主界面可以点坐标"
+		dm.moveto 1111, 88
+		Delay 500
+		dm.leftclick 
+	Else 
+		TracePrint "不在主界面，需要跳转回主界面"
+		跳转回主界面
+	End If 
+End Sub
+
+Sub 主界面home
+	判断当前界面 
+	
+	If 当前界面 = "主界面" Then 
+		TracePrint "已在主界面可以点home"
+		dm.moveto 1111, 88
+		Delay 500
+		dm.leftclick 
+		dm.moveto 1050, 131
+		Delay 500
+		dm.leftclick
+		
+	Else 
+		TracePrint "不在主界面，需要跳转回主界面"
+		跳转回主界面
+	End If 
+End Sub
+
 
 Sub 查当前地块信息
 	
@@ -478,7 +513,7 @@ Sub 攻占(aimx,aimy)
 	End If
 	Delay 1500
 	
-	dm_ret = dm.FindPic(0,0,1166,757,"D:\ajjl\待命.bmp||D:\ajjl\待命1.bmp||D:\ajjl\待命2.bmp","000000",0.9,0,intX,intY)
+	dm_ret = dm.FindPic(0,0,1166,757,"D:\ajjl\待命0.bmp","000000",0.9,0,intX,intY)
 	If intX >= 0 and intY >= 0 Then
     	TracePrint "找到攻占按钮"
     	dm.moveTo intX, intY
@@ -582,7 +617,9 @@ Sub 攻占一块土地(aimx,aimy)
 	
 End Sub
 
-Sub 从主城占领一块土地(aimx,aimy)
+Sub 从主城占领一块土地(aimx, aimy)
+	跳转回主界面 
+	
 	补充队伍一兵力 
 	跳转回主界面
 	攻占一块土地 aimx, aimy
@@ -591,11 +628,9 @@ End Sub
 Sub 进入主城
 	跳转回主界面 
 	
-	//点home按钮	
-	鼠标点击 1050, 130
+	主界面home
 	///点主城
 	鼠标点击 585, 346
-	
 	当前界面 = "主城界面"
 End Sub
 
@@ -1230,18 +1265,101 @@ Sub 鼠标点击(坐标X, 坐标Y)
 End Sub
 
 
+Sub 获取地块信息(x, y)
+	跳转回主界面
+	主界面点坐标 
+	跳转到坐标 x, y
+	
+	While isFindZhuCheng = False
+	
+		//网络调用ocr
+		txt = Plugin.ZXLOCR.QSOCR(4,63,1200,800, 0)
+		TracePrint txt
+		//部队地标星内3/3(511,1459
+		
+		
+		 抓取坐标 txt
+		 
+		 
+		If 当前坐标(0) <> 主城坐标(0) and 当前坐标(1) <> 主城坐标(1) Then 
+			isFindZhuCheng = true
+			
+		End If
+		TracePrint 当前坐标(0)
+		 TracePrint 当前坐标(1)
+	Wend
+	
+	
+End Sub
+
+
+Sub 获取主城信息
+	跳转回主界面
+	主界面点坐标
+	
+	While isFindZhuCheng = False
+	
+		//网络调用ocr
+		txt = Plugin.ZXLOCR.QSOCR(951,63,1177,161, 0)
+		TracePrint txt
+		//部队地标星内3/3(511,1459
+		
+		
+		 抓取坐标 txt
+		 
+		 
+		If 当前坐标(0) <> 0 and 当前坐标(1) <> 0 Then 
+			isFindZhuCheng = true
+			主城坐标(0) = 当前坐标(0)
+			主城坐标(1) = 当前坐标(1)
+			
+		End If
+		TracePrint 主城坐标(0)
+		 TracePrint 主城坐标(1)
+	Wend
+	
+	
+End Sub
+
+Sub 抓取坐标(txt)
+		当前坐标(0) = 0
+		当前坐标(1) = 0
+		
+		position = InStr(txt, "(")
+ 		position1 = InStr(txt, ")")
+ 		
+ 		position2 = InStr(txt, ",")
+ 		
+ 		TracePrint "position == " & position & "  position1 == " & position1 &"  position2== "&position2
+ 		
+ 		If position > 0 and position2 > position0 and position1 > position2 Then
+    		当前坐标(0) = Mid(txt, position + 1, position2 - position - 1)
+        	当前坐标(1) = Mid(txt, position2 + 1, position1 - position2 - 1)
+        	
+    		TracePrint 当前坐标(0)    		
+    		TracePrint 当前坐标(1)    		
+    		
+    	Else 
+     		TracePrint "没有抓取到坐标"
+    	
+		End If
+	
+End Sub
+
+
 Sub main
 	注册大漠 
 	获取系统配置
 	判断三国志是否已打开 
-	配置游戏窗口  
-	判断当前界面 
+	配置游戏窗口   
 	注册佐晓鹭
 //	获取地周围的几块地的信息 381, 1439
 	// 左上 380 1439  左下 380 1439  下 381 1440  右下382 1440  右下382 1439  上 381, 1438  
 //	获取位置信息
-	当前任务 = "征兵"
+//	当前任务 = "征兵"
 
+	Delay 2000
+	判断当前界面
 	If 当前界面 = "新手引导1" Then 
 		做新手引导1
 	End If
@@ -1260,8 +1378,10 @@ Sub main
 	End If
 	
 	
-//	从主城占领一块土地 510 ,1462
+//	从主城占领一块土地 510 ,1464
 	
+	获取主城信息 
+	获取地块信息 507,1459
 	
 //	//网络调用ocr
 //	txt = Plugin.ZXLOCR.QSOCR(951,63,1177,161, 0)
