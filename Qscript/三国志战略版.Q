@@ -27,6 +27,7 @@ UEsDBBQAAgAIAEw5TD+cfTI/KxMAAABgAAAKABEAUmVnRGxsLmRsbFVUDQAHbj2VTvd9OmXkfTpl7VwP
 
 
 [Script]
+Dim myPath		//附件地址
 Dim isSignUp  //是否注册成功  
 isSignUp = 0
 Dim isFindWindow //是否打开窗口
@@ -43,6 +44,20 @@ Dim 当前坐标(1)
 isFindZhuCheng = false
 
 Call main
+
+////、、、、、、、、、、、、、、、、、、、、、、、、以上都是全局变量、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+//=====================================================================================================
+////、、、、、、、、、、、、、、、、、、、、、、、、以下都是全局配置函数、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+///////包括 获取系统配置
+///////包括 关闭计算机
+///////包括 获取当前路径
+///////包括 获取剪切板内容
+///////包括 获取系统时间
+///////包括 注册大漠
+///////包括 判断三国志是否已打开
+///////包括 配置游戏窗口
+///////包括 注册佐晓鹭
+
 
 Sub 获取系统配置
 	//下面这句是获得屏幕分辨率宽度
@@ -263,15 +278,243 @@ Sub 注册佐晓鹭
 
 End Sub
 
-Function 获取界面名
+//=====================================================================================================
+////、、、、、、、、、、、、、、、、、、、、、、、、以下都是工具函数、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+///////包括 SZFindPic
 
-	//是否是主界面
-	dm_ret = dm.FindPic(0,0,300,300,"D:\ajjl\zc.bmp||D:\ajjl\招募.bmp","000000",0.9,0,intX,intY)
+/**
+*拼接字符串名字
+*/
+ Function mapNames(names, headStr, tailStr, spStr)
+ 	strAllName = ""
+	
+	For Each name In names
+		If strAllName = "" Then 
+		 		strAllName = headStr & "\" & name & tailStr
+			Else 
+		 		strAllName = "||" & headStr & "\" & name & tailStr
+		End If
+       	
+    Next
+    
+    mapNames = strAllName
+    
+ End Function
+ 
+  /**
+*工具函数 参数 和 返回值 说明
+*/
+ Function canFind(参数1, 参数2, 参数3, 参数4,资源名)
+ 	ret = SZFindPic(参数1, 参数2, 参数3, 参数4, 资源名)
+ 	If ret(1) > 0 and ret(2) > 0 Then 
+ 			TracePrint "确认能找到"&资源名
+ 			canFind = True
+ 		Else 
+ 			canFind =False
+ 	End If
+    	
+ End Function
+ 
+ 
+ 
+  /**
+*工具函数 参数 和 返回值 说明
+*/
+ Function SZFindPic(参数1,参数2,参数3,参数4, 资源名)
+ 	TracePrint "资源名  " & 资源名
+ 	TracePrint "路径  "&myPath&"\"&资源名&".bmp"
+	TracePrint "范围  ："&参数1 & " , "&参数2& " , "&参数3& " , "& 参数4
+ 	Dim ret(2)
+ 	dm_ret = dm.FindPic(参数1,参数2,参数3,参数4,myPath&"\"&资源名&".bmp","000000",0.9,0,intX,intY)
+	ret(0) = dm_ret
+	ret(1) = intX
+	ret(2) = intY
+    SZFindPic = ret
+ End Function
+ 
+ 
+ /**
+*工具函数 参数 和 返回值 说明
+*/
+ Function 工具函数(参数1, 参数2, 参数3, 参数4)
+ 	
+    
+ End Function
+ 
+
+
+Function 移动到(定位)
+	Delay 1500
+	dm_ret = dm.FindPic(0,0,1200,800,"D:\ajjl\"& 定位 &".bmp","000000",0.9,0,intX,intY)
 	If intX >= 0 and intY >= 0 Then
-    	TracePrint "找到界面"
+    	TracePrint "找到"&定位
+    	dm.moveTo intX, intY
+    	Delay 1000
+    	
+    	
+    Else 
+    	TracePrint "没有找到"&定位
+    	
+	End If
+	Delay 50
+End Function
+
+
+Sub 去点击(位置)
+	Delay 1500
+	dm_ret = dm.FindPic(0,0,1200,800,"D:\ajjl\"& 位置 &".bmp","000000",0.9,0,intX,intY)
+	If intX >= 0 and intY >= 0 Then
+    	TracePrint "找到"&位置
+    	dm.moveTo intX, intY
+    	Delay 1000
+    	dm.leftclick 
+    	
+    Else 
+    	TracePrint "没有找到"&位置
+    	
+	End If
+	Delay 50
+End Sub
+
+Sub 点颜色(颜色值)
+	dm_ret = dm.FindColor(0,0,1200,800,颜色值,1.0,0,intX,intY)
+	If intX >= 0 and intY >= 0 Then
+    	TracePrint "找到颜色"&颜色值
+    	dm.moveTo intX, intY
+    	Delay 1000
+    	dm.leftclick 
+	End If
+End Sub
+
+Sub 点击(位置)
+	移动到 位置
+	dm.leftclick 	
+End Sub
+
+Sub 鼠标点击(坐标X, 坐标Y)
+	Delay 50
+	dm.moveto 坐标X,坐标Y
+	dm.leftclick 
+	Delay 50
+End Sub
+
+
+
+//=====================================================================================================
+////、、、、、、、、、、、、、、、、、、、、、、、、以下都是游戏内变量、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+顶部区域 = 0			 // 0,0,1200,50
+	
+左上按钮 = 1  		 // 0,70,300,135
+	
+部队地标 = 2			//950,65,1200,200
+ 
+游戏区域 = 3			//0,70,1200,650
+	
+左下按钮 = 4			//0,570,140,800
+
+中间按钮 = 5			//260,650,900,800
+	
+地图坐标区域 = 6		//0,530,1200,580
+	
+	
+ 
+
+
+//=====================================================================================================
+////、、、、、、、、、、、、、、、、、、、、、、、、以下都是游戏内操作函数、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+///////包括 获取界面名
+/**
+*三战找一张图 返回true 成功 false 失败
+*/
+//Function isSZFindPic(范围,资源名)
+//	Dim ret, intX, intY
+//	
+//	ret = SZFindPic(范围, 资源名)
+//	intX = ret(1)
+//	intY = ret(2) 
+//	
+//	If intX >= 0 and intY >= 0 Then
+//    	TracePrint "找到图片" & 资源名
+//    	isSZFindPic = true
+//    	Exit Function
+//    Else
+//    	TracePrint "没有找到图片" & 资源名
+//    	isSZFindPic = False
+//    	Exit Function	
+//	End If
+//End Function
+///**
+//*三战找一张图 返回 坐标（1）
+//*/
+//Function SZFindPicEx(范围, 资源名)
+//	Dim	坐标(1)
+//	dm_ret = dm.FindPic(范围(0),范围(1),范围(2),范围(3),myPath&"\"&资源名&".bmp","000000",0.9,0,intX,intY)
+//	If intX >= 0 and intY >= 0 Then
+//    	TracePrint "找到图片" & 资源名
+//    	坐标(0) = intX
+//    	坐标(1) = intY
+//    	Exit Function
+//    Else
+//    	TracePrint "没有找到图片" & 资源名
+//    	坐标(0) = -1
+//    	坐标(1) = -1
+//    	Exit Function	
+//	End If
+//End Function
+//
+///**
+//*三战找多张图 返回true 成功 false 失败
+//*/
+//Function isSZFindPics(范围, 资源名)
+//	
+//
+//	Dim strAllPicNamePath
+//	
+//	strAllPicNamePath = mapNames(资源名, myPath, ".bmp", "||")
+//	
+//	isSZFindPics = isSZFindPic(范围, strAllPicNamePath)
+//	
+//End Function
+//
+///**
+//*三战找多张图中的一张 返回 坐标（1）
+//*/
+//Function SZFindPicsEx(范围, 资源名)
+//	
+//	Dim	坐标(1)
+//	dm_ret = dm.FindPic(范围(0),范围(1),范围(2),范围(3),myPath&"\"&资源名&".bmp","000000",0.9,0,intX,intY)
+//	If intX >= 0 and intY >= 0 Then
+//    	TracePrint "找到图片" & 资源名
+//    	坐标(0) = intX
+//    	坐标(1) = intY
+//    	Exit Function
+//    Else
+//    	TracePrint "没有找到图片" & 资源名
+//    	坐标(0) = -1
+//    	坐标(1) = -1
+//    	Exit Function	
+//	End If
+//End Function
+
+
+Function 获取界面名
+	
+	//是否是主界面
+	
+	dm_ret = dm.FindPic(260,650,900,800,"D:\ajjl\招募.bmp","000000",0.9,0,intX,intY)
+	If intX >= 0 and intY >= 0 Then
+    	TracePrint "找到招募"
     	当前界面 = "主界面"
     	Exit Function
 	End If
+	
+    dm_ret = dm.FindPic(0,70,300,135,"D:\ajjl\zc.bmp","000000",0.9,0,intX,intY)
+	If intX >= 0 and intY >= 0 Then
+    	TracePrint "找到zc"
+    	当前界面 = "主界面"
+    	Exit Function
+	End If
+
 	
 	dm_ret = dm.FindPic(0,0,200,200,"D:\ajjl\rw.bmp","000000",0.9,0,intX,intY)
 	If intX >= 0 and intY >= 0 Then
@@ -319,45 +562,106 @@ Function 获取界面名
 	
 	
 	
-	dm_ret = dm.FindPic(0,0,1200,600,"D:\ajjl\新手引导1.bmp","000000",0.9,0,intX,intY)
-	If intX >= 0 and intY >= 0 Then
-    	TracePrint "找到新手引导1"
-    	当前界面 = "新手引导1"
-    	Exit Function
-	End If
+
 	
 	
 End Function
 
+Function 获取当前任务
+		dm_ret = dm.FindPic(0,0,1200,600,"D:\ajjl\新手引导1.bmp","000000",0.9,0,intX,intY)
+	If intX >= 0 and intY >= 0 Then
+    	TracePrint "找到新手引导1"
+    	当前任务 = "新手引导1"
+    	Exit Function
+	End If
+End Function
+
+
+
+//=====================================================================================================
+////、、、、、、、、、、、、、、、、、、、、、、、、以下都是主界面调用操作函数、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+
+顶部区域 = 0			 // 0,0,1200,50
+	
+左上按钮 = 1  		 // 0,70,300,135
+	
+部队地标 = 2			//950,65,1200,200
+ 
+游戏区域 = 3			//0,70,1200,650
+	
+左下按钮 = 4			//0,570,140,800
+
+中间按钮 = 5			//260,650,900,800
+	
+地图坐标区域 = 6//0,530,1200,580
+
+Function 界面内查找(区域,名称,intX,intY)
+	intX = - 1 
+	intY = - 1 
+	TracePrint 区域
+	TracePrint 名称
+	TracePrint intX
+	TracePrint intY
+
+	Select Case 区域
+    	Case 顶部区域
+        	dm_ret = dm.FindPic(0,0,1200,50, "D:\ajjl\" & 名称 & ".bmp", "000000", 0.9, 0, intX, intY)
+		
+    	Case 左上按钮
+       		dm_ret = dm.FindPic(0,70,300,135, "D:\ajjl\" & 名称 & ".bmp", "000000", 0.9, 0, intX, intY)
+			
+    	Case 部队地标
+        	dm_ret = dm.FindPic(950,65,1200,200, "D:\ajjl\" & 名称 & ".bmp", "000000", 0.9, 0, intX, intY)
+			
+    	Case 游戏区域
+            	dm_ret = dm.FindPic(0,70,1200,650, "D:\ajjl\" & 名称 & ".bmp", "000000", 0.9, 0, intX, intY)
+			
+    	Case 左下按钮
+        	dm_ret = dm.FindPic(0,570,140,800, "D:\ajjl\" & 名称 & ".bmp", "000000", 0.9, 0, intX, intY)
+			
+    	Case 中间按钮
+        	dm_ret = dm.FindPic(260,650,900,800, "D:\ajjl\" & 名称 & ".bmp", "000000", 0.9, 0, intX, intY)
+			
+    	Case 地图坐标区域
+        	dm_ret = dm.FindPic(0,530,1200,580, "D:\ajjl\" & 名称 & ".bmp", "000000", 0.9, 0, intX, intY)
+			
+    	Case Else
+        	dm_ret = dm.FindPic(0,0,1200,800, "D:\ajjl\" & 名称 & ".bmp", "000000", 0.9, 0, intX, intY)
+			
+	End Select
+	If intX >= 0 and intY >= 0 Then
+    	TracePrint "找到  "&名称
+    	TracePrint intX
+    	TracePrint intY
+    	
+    	Exit Function
+    End If
+End Function
+
+
 
 Sub 判断当前界面
-	dm_ret = dm.FindPic(0,0,1200,800,"D:\ajjl\下一步.bmp","000000",0.9,0,intX,intY)
-	If intX >= 0 and intY >= 0 Then
-    	TracePrint "找到下一步按钮"
-    	dm.moveTo intX, intY
-    	Delay 1000
-    	dm.leftclick
-    	
-	End If
+
+	Delay 1000
 	
-	Delay 2000
+	获取界面名 
 	
-	获取界面名
 	TracePrint "当前界面名字是"&当前界面
 	
 End Sub
 
+Sub 判断当前任务
+	Delay 1000
+	
+	当前任务 = "新手引导"
+	 
+	
+	TracePrint "当前界面名字是"&当前界面
+End Sub
+
+
 Sub 跳转回主界面
-	dm_ret = dm.FindPic(1000,0,1190,150,"D:\ajjl\fhan.bmp||D:\ajjl\fhan2.bmp||D:\ajjl\fhan3.bmp||D:\ajjl\fhan4.bmp||D:\ajjl\xan.bmp||D:\ajjl\x2an.bmp","000000",0.9,0,intX,intY)
-	If intX >= 0 and intY >= 0 Then
-    	TracePrint "找到返回按钮"
-    	dm.moveTo intX, intY
-    	Delay 1000
-    	dm.leftclick
-    	
-    Else 
-    	TracePrint "没有找到返回按钮"	
-	End If
+	点击返回按钮
 	Delay 1000
 	判断当前界面
 	If 当前界面 = "主界面" Then 
@@ -589,21 +893,6 @@ Sub 攻占(aimx,aimy)
 End Sub
 
 
-Function 移动到(定位)
-	Delay 1500
-	dm_ret = dm.FindPic(0,0,1200,800,"D:\ajjl\"& 定位 &".bmp","000000",0.9,0,intX,intY)
-	If intX >= 0 and intY >= 0 Then
-    	TracePrint "找到"&定位
-    	dm.moveTo intX, intY
-    	Delay 1000
-    	
-    	
-    Else 
-    	TracePrint "没有找到"&定位
-    	
-	End If
-	Delay 50
-End Function
 
 Sub 攻占一块土地(aimx,aimy)
 	If 当前界面 = "主界面" Then 
@@ -630,7 +919,10 @@ Sub 进入主城
 	
 	主界面home
 	///点主城
-	鼠标点击 585, 346
+	Do  
+		鼠标点击 585, 346
+	Loop Until canFind(0, 70, 1200, 800, "jz") 
+	
 	当前界面 = "主城界面"
 End Sub
 
@@ -770,7 +1062,7 @@ Sub 获取地周围的几块地的信息(nowx, nowy)
 	
 End Sub
 
-Sub 做新手引导1
+Sub 做新手引导
 //
 ////对话
 //	For 10
@@ -1153,9 +1445,24 @@ End Sub
 
 
 Sub 点击招募按钮
+	If 当前界面 = "主界面" Then 
+		去点击 "招募"
+	End If
 	
 	
-	
+End Sub
+
+Sub 点击返回按钮
+	dm_ret = dm.FindPic(1000,0,1190,150,"D:\ajjl\fhan.bmp||D:\ajjl\fhan2.bmp||D:\ajjl\fhan3.bmp||D:\ajjl\fhan4.bmp||D:\ajjl\xan.bmp||D:\ajjl\x2an.bmp","000000",0.9,0,intX,intY)
+	If intX >= 0 and intY >= 0 Then
+    	TracePrint "找到返回按钮"
+    	dm.moveTo intX, intY
+    	Delay 1000
+    	dm.leftclick
+    	
+    Else 
+    	TracePrint "没有找到返回按钮"	
+	End If
 End Sub
 
 
@@ -1252,19 +1559,6 @@ End Sub
 
 
 
-Sub 点击(位置)
-	移动到 位置
-	dm.leftclick 	
-End Sub
-
-Sub 鼠标点击(坐标X, 坐标Y)
-	Delay 50
-	dm.moveto 坐标X,坐标Y
-	dm.leftclick 
-	Delay 50
-End Sub
-
-
 Sub 获取地块信息(x, y)
 	跳转回主界面
 	主界面点坐标 
@@ -1347,41 +1641,167 @@ Sub 抓取坐标(txt)
 End Sub
 
 
+//=====================================================================================================
+////、、、、、、、、、、、、、、、、、、、、、、、、以下都是建筑界面调用操作函数、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+
+
+
+//=====================================================================================================
+////、、、、、、、、、、、、、、、、、、、、、、、、以下都是队伍操作函数、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+
+
+//=====================================================================================================
+////、、、、、、、、、、、、、、、、、、、、、、、、以下都是新手引导、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+
+Sub 新手引导
+LogStart "D:\a.log"
+TracePrint "三国志战略版开始新手引导"
+LogStop
+
+Do
+	Delay 300
+	If canFind(0, 70, 1200, 650, "一木难扶") Then 
+		当前任务 = "结束引导"
+		LogStart "D:\a.log"
+		TracePrint "三国志战略版结束引导"
+		LogStop
+		Exit Do
+	End If
+	
+	去点击 "下一步"
+	鼠标点击 590, 340
+	点击返回按钮
+	
+	Delay 143
+	
+	点击招募按钮
+	If canFind(0,70,1200,650,"招募2次")= True Then 
+		去点击 "招募2次"
+	End If
+	If canFind(0,70,1200,650,"选择主城")= True Then 
+		进入主城
+	End If
+	If canFind(0,70,1200,650,"点击进入主城")= True Then 
+		进入主城
+	End If
+	If canFind(0,70,1200,650,"点击进行部队配置")= True Then 
+		去点击 "编制"
+	End If
+	If canFind(0,70,1200,650,"加号")= True Then 
+		去点击 "加号"
+	End If
+	If canFind(0,70,1200,650,"上阵1")= True Then 
+		去点击 "上阵1"
+	End If
+	If canFind(0,70,1200,650,"上阵")= True Then 
+		去点击 "上阵"
+	End If
+	If canFind(0,650,1200,800,"快速分兵")= True Then 
+		去点击 "快速分兵"
+	End If
+	If canFind(0,600,1200,800,"确认分兵")= True Then 
+		去点击 "确认分兵"
+	End If
+	If canFind(0,70,1200,800,"gzan")= True Then 
+		去点击 "gzan"
+	End If
+	If canFind(0,70,1200,800,"血条")= True Then 
+		去点击 "血条"
+	End If
+	If canFind(0,70,1200,800,"攻占按钮")= True Then 
+		去点击 "攻占按钮"
+	End If
+	If canFind(0,70,1200,800,"跳过")= True Then 
+		去点击 "跳过"
+	End If
+	If canFind(0,70,1200,800,"回城")= True Then 
+		去点击 "回城"
+	End If
+	If canFind(0,70,1200,800,"兵力")= True Then 
+		去点击 "兵力"
+	End If
+	If canFind(0,70,1200,800,"兵种选择")= True Then 
+		去点击 "兵种选择"
+	End If
+	If canFind(0,70,1200,800,"枪兵")= True Then 
+		去点击 "枪兵"
+	End If
+	If canFind(0,70,1200,800,"行军")= True Then 
+		去点击 "行军"
+	End If
+	If canFind(0,70,1200,800,"士气")= True Then 
+		去点击 "士气"
+	End If
+	If canFind(0,70,1200,800,"确认行军")= True Then 
+		去点击 "确认行军"
+	End If
+	If canFind(0,70,1200,800,"下阵")= True Then 
+		去点击 "下阵"
+	End If
+	If canFind(0,70,1200,800,"确认按钮")= True Then 
+		去点击 "确认按钮"
+	End If
+	
+	
+	
+
+Loop Until 当前任务 <> "新手引导"
+	
+End Sub
+
+
+//=====================================================================================================
+////、、、、、、、、、、、、、、、、、、、、、、、、以下都是主函数、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+
 Sub main
+
+///注册准备
 	注册大漠 
-	获取系统配置
+	获取系统配置 
+	
 	判断三国志是否已打开 
-	配置游戏窗口   
-	注册佐晓鹭
+	配置游戏窗口 
+	
+	注册佐晓鹭 
+	
+	判断当前界面
+	
+	判断当前任务 
+	
+	
+	
+	
+	
+	
 //	获取地周围的几块地的信息 381, 1439
 	// 左上 380 1439  左下 380 1439  下 381 1440  右下382 1440  右下382 1439  上 381, 1438  
 //	获取位置信息
 //	当前任务 = "征兵"
 
-	Delay 2000
-	判断当前界面
-	If 当前界面 = "新手引导1" Then 
-		做新手引导1
+	
+	If 当前任务 = "新手引导" Then 
+			新手引导 
+			
 	End If
-	If 当前任务 = "主城引导" Then
+	If 当前任务 = "自动升级建筑" Then
 	
 		升级主城仓库
 	End If
 	
-	If 当前任务 = "升级资源1" Then
+	If 当前任务 = "自动铺路" Then
 	升级农场石头 
 	End If
 	
 	
-	If 当前任务 = "征兵" Then
+	If 当前任务 = "自动打地" Then
 	全力征兵 
 	End If
 	
 	
 //	从主城占领一块土地 510 ,1464
 	
-	获取主城信息 
-	获取地块信息 507,1459
+//	获取主城信息 
+//	获取地块信息 507,1459
 	
 //	//网络调用ocr
 //	txt = Plugin.ZXLOCR.QSOCR(951,63,1177,161, 0)
