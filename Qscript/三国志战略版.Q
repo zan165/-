@@ -219,7 +219,7 @@ hwnd = dm.FindWindow("", "三国志·战略版")
 	Else 
 //	dm_ret = dm.SetWindowText(hwnd, "三战01")
 	//绑定游戏界面窗口
-		dm_ret = dm.BindWindow(hwnd, "normal", "normal", "normal", 0)
+		dm_ret =dm.BindWindow(hwnd,"normal","normal","normal",0)
 		TracePrint "三国志战略版 电脑版已打开"
 		isFindWindow = 1
 	End If
@@ -653,8 +653,8 @@ End Sub
 Sub 判断当前任务
 	Delay 1000
 	
-	当前任务 = "新手引导"
-	 
+	当前任务 = "升级建筑"
+	用铜币升级建筑 = false
 	
 	TracePrint "当前界面名字是"&当前界面
 End Sub
@@ -940,9 +940,12 @@ End Sub
 
 
 Sub 进入建筑界面
-	进入主城 
-	点击 "jz"
-	当前界面 = "建筑界面"
+	判断当前界面
+	If 当前界面 <> "建筑界面" Then
+		进入主城 
+		点击 "jz"
+		当前界面 = "建筑界面"
+	End If
 End Sub
 
 Sub 全力征兵
@@ -1467,26 +1470,11 @@ End Sub
 
 
 Sub 升级主城仓库
-		
+		TracePrint "升级主城仓库"
 	///点主城
 	
-dm.moveto 585, 346
-
-		Delay 1100
-		dm.leftclick 
-		Delay 800
-dm.moveto 585, 346
-
-		Delay 1100
-		dm.leftclick 
-
+	进入建筑界面 
 	
-dm.moveto 355, 228
-
-		Delay 1100
-		dm.leftclick 
-
-
 //点4下  跳过引导
 dm.moveto 1000, 600
 
@@ -1512,21 +1500,8 @@ dm.moveto 110, 370
 		dm.leftclick 
 	
 	
-	移动到 "升级"
-	dm.leftclick 
+	去升级这个建筑
 	Delay 1000
-	//选中仓库
-dm.moveto 600, 130
-
-		Delay 1100
-		dm.leftclick 
-	
-	
-	移动到 "建造"
-	dm.leftclick 	
-	
-	
-	跳转回主界面
 End Sub
 
 Sub 升级农场石头
@@ -1540,8 +1515,7 @@ dm.moveto 600, 300
 		dm.leftclick 
 	
 	
-	点击 "建造"
-	点击 "升级"
+	去升级这个建筑
 	Delay 1000
 	//选中石头
 dm.moveto 760, 300
@@ -1550,14 +1524,33 @@ dm.moveto 760, 300
 		dm.leftclick 
 	
 	
-	点击 "建造"	
-	点击 "升级"
-	
-	跳转回主界面
+	去升级这个建筑
 	
 End Sub
 
+Sub 升级可以升级的建筑
+	进入建筑界面 
+	Delay 1500
+	If canFind(0, 70, 1200, 800, "升") Then 
+		去点击 "升"
+		去升级这个建筑
+	End If
+	
+	If canFind(0, 70, 1200, 800, "升1") Then 
+		去点击 "升1"
+		去升级这个建筑
+	End If
+End Sub
 
+Sub 去升级这个建筑
+	去点击 "建造"
+	去点击 "升级"
+	If 用铜币升级建筑 Then 
+			去点击 "确认花费"
+		Else 
+			去点击 "确认不花"
+	End If
+End Sub
 
 Sub 获取地块信息(x, y)
 	跳转回主界面
@@ -1658,10 +1651,13 @@ LogStart "D:\a.log"
 TracePrint "三国志战略版开始新手引导"
 LogStop
 
+Dim shouldChou
+shouldChou = True
+
 Do
 	Delay 300
 	If canFind(0, 70, 1200, 650, "一木难扶") Then 
-		当前任务 = "结束引导"
+		当前任务 = "升级建筑"
 		LogStart "D:\a.log"
 		TracePrint "三国志战略版结束引导"
 		LogStop
@@ -1674,10 +1670,15 @@ Do
 	
 	Delay 143
 	
-	点击招募按钮
-	If canFind(0,70,1200,650,"招募2次")= True Then 
-		去点击 "招募2次"
+	If shouldChou Then 
+		
+		点击招募按钮
+		If canFind(0,70,1200,650,"招募2次")= True Then 
+			去点击 "招募2次"
+			shouldChou = False
+		End If
 	End If
+	
 	If canFind(0,70,1200,650,"选择主城")= True Then 
 		进入主城
 	End If
@@ -1704,9 +1705,6 @@ Do
 	End If
 	If canFind(0,70,1200,800,"gzan")= True Then 
 		去点击 "gzan"
-	End If
-	If canFind(0,70,1200,800,"血条")= True Then 
-		去点击 "血条"
 	End If
 	If canFind(0,70,1200,800,"攻占按钮")= True Then 
 		去点击 "攻占按钮"
@@ -1749,6 +1747,48 @@ Loop Until 当前任务 <> "新手引导"
 	
 End Sub
 
+//=====================================================================================================
+////、、、、、、、、、、、、、、、、、、、、、、、、以下都功能区域、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+
+
+Sub 升级建筑
+	TracePrint "升级建筑"
+	跳转回主界面 
+	
+	Dim lastCheckTime
+	lastCheckTime = 30
+	Dim checkCount
+	checkCount =0
+	Do
+		TracePrint  "升级建筑循环中"
+		lastCheckTime = lastCheckTime - 30
+		TracePrint "lastCheckTime  ::"&lastCheckTime
+		If lastCheckTime <= 0 Then 
+			升级主城仓库 
+			升级农场石头 
+			升级可以升级的建筑 
+			checkCount =checkCount+1
+			lastCheckTime = 15 * checkCount
+			TracePrint  "下一次升级建筑时间:"&lastCheckTime
+		End If
+	
+		Delay 30000
+	Loop Until 当前任务 <> "升级建筑"
+	
+End Sub
+
+Sub 自动铺路
+	Dim 目标位置(1)
+	目标位置(0) = 1479
+	目标位置(1) = 979
+	Dim 当前位置(1)
+	当前位置(0) = 1483
+	当前位置(1) = 977
+	
+	Do
+	
+	Loop Until 当前位置(0) = 目标位置(0) and 当前位置(0) = 目标位置(0)
+	End Sub
 
 //=====================================================================================================
 ////、、、、、、、、、、、、、、、、、、、、、、、、以下都是主函数、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
@@ -1783,18 +1823,18 @@ Sub main
 			新手引导 
 			
 	End If
-	If 当前任务 = "自动升级建筑" Then
 	
-		升级主城仓库
+	If 当前任务 = "升级建筑" Then
+		升级建筑
 	End If
 	
 	If 当前任务 = "自动铺路" Then
-	升级农场石头 
+		自动铺路 
 	End If
 	
 	
 	If 当前任务 = "自动打地" Then
-	全力征兵 
+		自动打地 
 	End If
 	
 	
