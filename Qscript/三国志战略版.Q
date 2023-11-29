@@ -9,7 +9,7 @@ StopHotkeyMod=0
 RunOnce=1
 EnableWindow=
 MacroID=5df7f713-f770-44de-8331-d1bc8eb60e53
-Description=三国志战略版
+Description=三国志战略版_自动备份_自动备份
 Enable=1
 AutoRun=0
 [Repeat]
@@ -40,7 +40,12 @@ Dim presentOwn
 Dim presentEnemy
 Dim 主城坐标(1)
 Dim 当前坐标(1)
-
+Dim 目标位置(1)
+	目标位置(0) = 1479
+	目标位置(1) = 979
+Dim 当前位置(1)
+	当前位置(0) = 1483
+	当前位置(1) = 977
 isFindZhuCheng = false
 
 Call main
@@ -321,11 +326,11 @@ End Sub
 *工具函数 参数 和 返回值 说明
 */
  Function SZFindPic(参数1,参数2,参数3,参数4, 资源名)
- 	TracePrint "资源名  " & 资源名
- 	TracePrint "路径  "&myPath&"\"&资源名&".bmp"
-	TracePrint "范围  ："&参数1 & " , "&参数2& " , "&参数3& " , "& 参数4
+// 	TracePrint "资源名  " & 资源名
+// 	TracePrint "路径  "&myPath&"\"&资源名&".bmp"
+//	TracePrint "范围  ："&参数1 & " , "&参数2& " , "&参数3& " , "& 参数4
  	Dim ret(2)
- 	dm_ret = dm.FindPic(参数1,参数2,参数3,参数4,myPath&"\"&资源名&".bmp","000000",0.9,0,intX,intY)
+ 	dm_ret = dm.FindPic(参数1,参数2,参数3,参数4,myPath&"\"&资源名&".bmp","000000",0.8,0,intX,intY)
 	ret(0) = dm_ret
 	ret(1) = intX
 	ret(2) = intY
@@ -653,7 +658,7 @@ End Sub
 Sub 判断当前任务
 	Delay 1000
 	
-	当前任务 = "升级建筑"
+	当前任务 = "自动铺路"
 	用铜币升级建筑 = false
 	
 	TracePrint "当前界面名字是"&当前界面
@@ -716,7 +721,7 @@ Sub 跳转到坐标(aimx, aimy)
 	//点击地图按钮
 	dm_ret = dm.FindPic(0,570,115,615,"D:\ajjl\dtan.bmp","000000",0.9,0,intX,intY)
 	If intX >= 0 and intY >= 0 Then
-    	TracePrint "找到地图按钮"
+//    	TracePrint "找到地图按钮"
     	dm.moveTo intX, intY
     	Delay 1000
     	dm.leftclick
@@ -817,17 +822,14 @@ Sub 攻占(aimx,aimy)
 	End If
 	Delay 1500
 	
-	dm_ret = dm.FindPic(0,0,1166,757,"D:\ajjl\待命0.bmp","000000",0.9,0,intX,intY)
-	If intX >= 0 and intY >= 0 Then
-    	TracePrint "找到攻占按钮"
-    	dm.moveTo intX, intY
-    	Delay 1000
-    	dm.leftclick
-    	
-    Else 
-    	TracePrint "没有找到待命按钮"
-    	EndScript
-	End If
+	去点击 "停留"
+	
+	
+	
+	去点击 "士气"
+	去点击 "兵力"
+	去点击 "待命"
+	去点击 "待命0"
 	
 	
 	Delay 1500
@@ -979,9 +981,9 @@ Sub 一个方向铺路(nowX,nowY,lastStep,方向)
 	
 End Sub
 
-Sub 获取位置信息(aimx, aimy)
+Function 获取位置信息(aimx, aimy)
 
-
+	Dim 土地信息(2)
 //	跳转到坐标 381, 1439
 	跳转到坐标 aimx, aimy
 	Delay 1000
@@ -1019,7 +1021,30 @@ Sub 获取位置信息(aimx, aimy)
 
 	index=index+1	
 	Next
-End Sub
+	
+	
+	If canFind(0, 70, 1200, 800, "自己") Then 
+		地块主人 = 0
+	ElseIf canFind(0, 70, 1200, 800, "扫荡") Then
+		地块主人 = 0
+	ElseIf canFind(0, 70, 1200, 800, "入城") Then
+		地块主人 = 0
+	ElseIf canFind(0, 70, 1200, 800, "敌人") Then
+		地块主人 = 2
+	Elseif canFind(0, 70, 1200, 800, "gzan") Then
+		地块主人 = 3
+	Else 
+		地块主人 = 1
+	End If
+	
+	
+	土地信息(0) = 地块主人
+	土地信息(1) = 地块等级
+	土地信息(2) = 地块兵种
+	
+	获取位置信息 = 土地信息
+	
+End Function
 
 
 
@@ -1033,7 +1058,7 @@ Sub 获取地周围的几块地的信息(nowx, nowy)
 	左上(0) = nowx - 1
 	左上(1) = nowy
 	
-	获取位置信息 左上(0), 左上(1) 
+	 获取位置信息 左上(0), 左上(1) 
 	
 	
 	左下(0) = nowx - 1
@@ -1456,7 +1481,7 @@ Sub 点击招募按钮
 End Sub
 
 Sub 点击返回按钮
-	dm_ret = dm.FindPic(1000,0,1190,150,"D:\ajjl\fhan.bmp||D:\ajjl\fhan2.bmp||D:\ajjl\fhan3.bmp||D:\ajjl\fhan4.bmp||D:\ajjl\xan.bmp||D:\ajjl\x2an.bmp","000000",0.9,0,intX,intY)
+	dm_ret = dm.FindPic(1000,0,1190,150,"D:\ajjl\fhan.bmp||D:\ajjl\fhan2.bmp||D:\ajjl\fhan3.bmp||D:\ajjl\fhan4.bmp||D:\ajjl\fhan5.bmp||D:\ajjl\xan.bmp||D:\ajjl\x2an.bmp","000000",0.9,0,intX,intY)
 	If intX >= 0 and intY >= 0 Then
     	TracePrint "找到返回按钮"
     	dm.moveTo intX, intY
@@ -1778,29 +1803,71 @@ Sub 升级建筑
 End Sub
 
 Sub 自动铺路
-	Dim 目标位置(1)
-	目标位置(0) = 1479
-	目标位置(1) = 979
-	Dim 当前位置(1)
-	当前位置(0) = 1483
-	当前位置(1) = 977
+	TracePrint "进入自动铺路递归"
+
+	跳转回主界面
+
 	
-	Dim direction 
+
 	
-	If 目标位置(0) < 当前位置(0) and 目标位置(1) = 当前位置(1) Then 
-		direction =0
-	Else 
-		
+	If 当前位置(0) = 目标位置(0) and 当前位置(0) = 目标位置(0) Then 
+		Exit Sub
+		Else 
+			Dim direction 
+			
+			If 目标位置(0) < 当前位置(0) and 目标位置(1) = 当前位置(1) Then 
+				direction =0
+			ElseIf 目标位置(0) < 当前位置(0) and 目标位置(1) > 当前位置(1) Then
+				direction = 1
+			ElseIf 目标位置(0) = 当前位置(0) and 目标位置(1) > 当前位置(1) Then
+				direction = 2
+			ElseIf 目标位置(0) > 当前位置(0) and 目标位置(1) = 当前位置(1) Then
+				direction = 3
+			ElseIf 目标位置(0) > 当前位置(0) and 目标位置(1) < 当前位置(1) Then
+				direction = 4
+			ElseIf 目标位置(0) = 当前位置(0) and 目标位置(1) < 当前位置(1) Then
+				direction = 5
+			End If
+			
+			遍历顺序 = 获得遍历顺序(direction)
+			
+			For i = 0 To 5
+			 Dim temp(1)
+			 temp(0) = 当前位置(0) + 遍历顺序(i)(0)
+			 temp(1) = 当前位置(1) + 遍历顺序(i)(1)
+			
+			 ret = 获取位置信息(temp(0), temp(1))
+			 TracePrint "地块主人 " & ret(0) & "  地块等级 " & ret(1)
+			 Delay 1000
+				If ret(0)  = 0 Then 
+					当前位置(0) = temp(0)
+					当前位置(1) = temp(1)
+					Exit For
+				ElseIf ret(0) = 3 and ret(1) < 2 Then
+					攻占一块土地 temp(0),temp(1)
+					当前位置(0) = temp(0)
+					当前位置(1) = temp(1)
+					Delay 2 * 60000 + 6000
+					Exit For
+				Else 
+					TracePrint "地块主任 "&ret(0)  &"  地块等级 "&ret(1)
+				End If
+			Next
+			
+			自动铺路
 	End If
 	
 	
-	Do
 	
 	
 	
-	
-	Loop Until 当前位置(0) = 目标位置(0) and 当前位置(0) = 目标位置(0)
+	 
+
 	End Sub
+	
+	
+	
+	
 	
 	Function 获得遍历顺序(index)
 		Dim A(1), B(1), C(1), D(1), E(1), F(1)//代表8个方向
