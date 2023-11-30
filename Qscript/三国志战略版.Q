@@ -9,7 +9,7 @@ StopHotkeyMod=0
 RunOnce=1
 EnableWindow=
 MacroID=5df7f713-f770-44de-8331-d1bc8eb60e53
-Description=三国志战略版_自动备份_自动备份
+Description=三国志战略版
 Enable=1
 AutoRun=0
 [Repeat]
@@ -572,14 +572,7 @@ Function 获取界面名
 	
 End Function
 
-Function 获取当前任务
-		dm_ret = dm.FindPic(0,0,1200,600,"D:\ajjl\新手引导1.bmp","000000",0.9,0,intX,intY)
-	If intX >= 0 and intY >= 0 Then
-    	TracePrint "找到新手引导1"
-    	当前任务 = "新手引导1"
-    	Exit Function
-	End If
-End Function
+
 
 
 
@@ -658,7 +651,7 @@ End Sub
 Sub 判断当前任务
 	Delay 1000
 	
-	当前任务 = "自动铺路"
+	当前任务 = "升级建筑"
 	用铜币升级建筑 = false
 	
 	TracePrint "当前界面名字是"&当前界面
@@ -1683,6 +1676,7 @@ Do
 	Delay 300
 	If canFind(0, 70, 1200, 650, "一木难扶") Then 
 		当前任务 = "升级建筑"
+		去点击 "一木难扶"
 		LogStart "D:\a.log"
 		TracePrint "三国志战略版结束引导"
 		LogStop
