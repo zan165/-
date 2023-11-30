@@ -41,11 +41,11 @@ Dim presentEnemy
 Dim 主城坐标(1)
 Dim 当前坐标(1)
 Dim 目标位置(1)
-	目标位置(0) = 1479
-	目标位置(1) = 979
+	目标位置(0) = 504
+	目标位置(1) = 1213
 Dim 当前位置(1)
-	当前位置(0) = 1483
-	当前位置(1) = 977
+	当前位置(0) = 503
+	当前位置(1) = 1209
 isFindZhuCheng = false
 
 Call main
@@ -651,7 +651,7 @@ End Sub
 Sub 判断当前任务
 	Delay 1000
 	
-	当前任务 = "升级建筑"
+	当前任务 = "自动铺路"
 	用铜币升级建筑 = false
 	
 	TracePrint "当前界面名字是"&当前界面
@@ -912,10 +912,12 @@ End Sub
 Sub 进入主城
 	跳转回主界面 
 	
-	主界面home
+	
 	///点主城
-	Do  
-		鼠标点击 585, 346
+	Do
+		Delay 1000
+		主界面home
+		去点击 "入城"
 	Loop Until canFind(0, 70, 1200, 800, "jz") 
 	
 	当前界面 = "主城界面"
@@ -980,7 +982,7 @@ Function 获取位置信息(aimx, aimy)
 //	跳转到坐标 381, 1439
 	跳转到坐标 aimx, aimy
 	Delay 1000
-	txt = Plugin.ZXLOCR.QSOCR(5,76,1176,668, 0)
+	txt = Plugin.ZXLOCR.BDOCR(5,76,1176,668, 0)
 //	TracePrint txt
 
 	Dim 土地(10)
@@ -1804,25 +1806,52 @@ Sub 自动铺路
 	
 
 	
-	If 当前位置(0) = 目标位置(0) and 当前位置(0) = 目标位置(0) Then 
-		Exit Sub
-		Else 
-			Dim direction 
+			If 当前位置(0) = 目标位置(0) and 当前位置(0) = 目标位置(0) Then 
 			
-			If 目标位置(0) < 当前位置(0) and 目标位置(1) = 当前位置(1) Then 
-				direction =0
-			ElseIf 目标位置(0) < 当前位置(0) and 目标位置(1) > 当前位置(1) Then
-				direction = 1
-			ElseIf 目标位置(0) = 当前位置(0) and 目标位置(1) > 当前位置(1) Then
-				direction = 2
-			ElseIf 目标位置(0) > 当前位置(0) and 目标位置(1) = 当前位置(1) Then
-				direction = 3
-			ElseIf 目标位置(0) > 当前位置(0) and 目标位置(1) < 当前位置(1) Then
-				direction = 4
-			ElseIf 目标位置(0) = 当前位置(0) and 目标位置(1) < 当前位置(1) Then
-				direction = 5
+			Else
+			Dim direction
+			Dim strDes
+			If 目标位置(0) < 当前位置(0) Then 
+				strDes= "左"
+			ElseIf 目标位置(0) > 当前位置(0) Then
+				strDes= "右"
+			ElseIf 目标位置(0) = 当前位置(0) Then
+				strDes= ""
+			
 			End If
 			
+			
+			If 目标位置(1) < 当前位置(1) Then 
+				strDes = strDes & "上"
+				
+			ElseIf 目标位置(1) > 当前位置(1) Then
+				strDes = strDes & "下"
+				
+			ElseIf 目标位置(1) = 当前位置(1) Then
+				strDes = strDes & ""
+			
+			End If
+			
+			If strDes="左上" or strDes = "左" Then 
+				direction =0
+			ElseIf strDes="左下" Then
+				direction = 1
+			ElseIf strDes = "下" Then
+				direction = 2
+			ElseIf strDes="右下"Then
+				direction = 3
+			ElseIf  strDes="右"or strDes="右上" Then
+				direction = 4
+			ElseIf  strDes="上" Then
+				direction = 5
+			End If
+
+
+			TracePrint "目标位置(0)  ====  " & 目标位置(0)
+			TracePrint "目标位置(1)  ====  " & 目标位置(1)
+			TracePrint "当前位置(0)  ====  " & 当前位置(0)
+			TracePrint "当前位置(1)  ====  "&当前位置(1)
+			TracePrint "direction  ====  "&direction
 			遍历顺序 = 获得遍历顺序(direction)
 			
 			For i = 0 To 5
@@ -1848,15 +1877,9 @@ Sub 自动铺路
 				End If
 			Next
 			
-			自动铺路
-	End If
+			End If
+			自动铺路 
 	
-	
-	
-	
-	
-	 
-
 	End Sub
 	
 	
@@ -1897,7 +1920,7 @@ Sub 自动铺路
 			For i = 0 To 5
 				newArray(i) = 遍历顺序((i + index) mod 5)
 			Next		
-		获得遍历顺序 = 遍历顺序
+		获得遍历顺序 = newArray
 	End Function
 	
 
