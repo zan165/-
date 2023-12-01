@@ -41,11 +41,11 @@ Dim presentEnemy
 Dim 主城坐标(1)
 Dim 当前坐标(1)
 Dim 目标位置(1)
-	目标位置(0) = 499
-	目标位置(1) = 1219
+	目标位置(0) = 516
+	目标位置(1) = 1218
 Dim 当前位置(1)
-	当前位置(0) = 496
-	当前位置(1) = 1214
+	当前位置(0) = 508
+	当前位置(1) = 1211
 	铺路等级 = 4
 isFindZhuCheng = false
 
@@ -652,7 +652,7 @@ End Sub
 Sub 判断当前任务
 	Delay 1000
 	
-	当前任务 = "升级建筑"
+	当前任务 = "自动铺路"
 	用铜币升级建筑 = false
 	
 	TracePrint "当前界面名字是"&当前界面
@@ -983,7 +983,7 @@ Function 获取位置信息(aimx, aimy)
 //	跳转到坐标 381, 1439
 	跳转到坐标 aimx, aimy
 	Delay 1000
-	txt = Plugin.ZXLOCR.TTOCR(5,76,1176,668, 0)
+	txt = Plugin.ZXLOCR.QSOCR(5,76,1176,668, 0)
 //	TracePrint txt
 
 	Dim 土地(10)
@@ -1804,10 +1804,6 @@ End Sub
 Sub 自动铺路
 	TracePrint "进入自动铺路递归"
 	
-
-	
-
-	
 			If 当前位置(0) = 目标位置(0) and 当前位置(1) = 目标位置(1) Then 
 				Exit Sub
 			Else
@@ -1855,11 +1851,11 @@ Sub 自动铺路
 			TracePrint "当前位置(1)  ====  "&当前位置(1)
 			TracePrint "direction  ====  " & direction
 			
-			Randomize
-			//得到 1~99999999 之间的一个随机数
-			x = (Int((15 * Rnd) + 1) mod 3 )-1
-			
-			direction=direction+x
+//			Randomize
+//			//得到 1~99999999 之间的一个随机数
+//			x = (Int((15 * Rnd) + 1) mod 3 )-1
+//			
+//			direction=direction+x
 			For i = 0 To 5
 			 
 			 temp = getNextPoint (当前位置(0),当前位置(1) ,(direction+i) mod 6)
@@ -1872,16 +1868,18 @@ Sub 自动铺路
 			 ret = 获取位置信息(temp(0), temp(1))
 			 TracePrint "地块主人 " & ret(0) & "  地块等级 " & ret(1)
 			 Delay 1000
-				If ret(0)  = 0  Then 
-					当前位置(0) = temp(0)
-					当前位置(1) = temp(1)
-					Exit For
+			 
+				If ret(0)  = 0  and abs(temp(0)-目标位置(0))+abs(temp(1)-目标位置(1)) < abs(当前位置(0)-目标位置(0))+abs(当前位置(0)-目标位置(1))Then 
+//					当前位置(0) = temp(0)
+//					当前位置(1) = temp(1)
+//					Exit For
+				TracePrint "地块主人是自己 跳过 "
 				ElseIf ret(0) = 3 and ret(1) < 铺路等级 Then
 				TracePrint "当前位置变成 "& temp(0) &"，"&temp(1)
-					攻占一块土地 temp(0),temp(1)
+//					攻占一块土地 temp(0),temp(1)
 					当前位置(0) = temp(0)
 					当前位置(1) = temp(1)
-					Delay 2 * 60000 + 6000
+//					Delay 2 * 60000 + 6000
 					Exit For
 				Else 
 					TracePrint "地块主任 "&ret(0)  &"  地块等级 "&ret(1)
