@@ -41,11 +41,12 @@ Dim presentEnemy
 Dim 主城坐标(1)
 Dim 当前坐标(1)
 Dim 目标位置(1)
-	目标位置(0) = 504
-	目标位置(1) = 1213
+	目标位置(0) = 499
+	目标位置(1) = 1219
 Dim 当前位置(1)
-	当前位置(0) = 503
-	当前位置(1) = 1209
+	当前位置(0) = 496
+	当前位置(1) = 1214
+	铺路等级 = 4
 isFindZhuCheng = false
 
 Call main
@@ -651,7 +652,7 @@ End Sub
 Sub 判断当前任务
 	Delay 1000
 	
-	当前任务 = "自动铺路"
+	当前任务 = "升级建筑"
 	用铜币升级建筑 = false
 	
 	TracePrint "当前界面名字是"&当前界面
@@ -982,7 +983,7 @@ Function 获取位置信息(aimx, aimy)
 //	跳转到坐标 381, 1439
 	跳转到坐标 aimx, aimy
 	Delay 1000
-	txt = Plugin.ZXLOCR.BDOCR(5,76,1176,668, 0)
+	txt = Plugin.ZXLOCR.TTOCR(5,76,1176,668, 0)
 //	TracePrint txt
 
 	Dim 土地(10)
@@ -1018,9 +1019,7 @@ Function 获取位置信息(aimx, aimy)
 	Next
 	
 	
-	If canFind(0, 70, 1200, 800, "自己") Then 
-		地块主人 = 0
-	ElseIf canFind(0, 70, 1200, 800, "扫荡") Then
+	If canFind(0, 70, 1200, 800, "扫荡") Then
 		地块主人 = 0
 	ElseIf canFind(0, 70, 1200, 800, "入城") Then
 		地块主人 = 0
@@ -1051,13 +1050,13 @@ Sub 获取地周围的几块地的信息(nowx, nowy)
 	
 	Dim 左上(1), 左下(1), 下(1), 右下(1), 右上(1), 上(1)
 	左上(0) = nowx - 1
-	左上(1) = nowy
+	左上(1) = nowy - 1
 	
 	 获取位置信息 左上(0), 左上(1) 
 	
 	
 	左下(0) = nowx - 1
-	左下(1) = nowy + 1
+	左下(1) = nowy
 	获取位置信息 左下(0) ,左下(1)
 	
 	
@@ -1067,12 +1066,13 @@ Sub 获取地周围的几块地的信息(nowx, nowy)
 	
 	
 	右下(0) = nowx + 1
-	右下(1) = nowy + 1
+	右下(1) = nowy
 	获取位置信息 右下(0) ,右下(1)
 	
 	
 	右上(0) = nowx + 1
-	右上(1) = nowy
+	右上(1) = nowy - 1
+
 	获取位置信息 右上(0) ,右上(1)
 	
 	上(0) = nowx 
@@ -1781,7 +1781,9 @@ Sub 升级建筑
 	Dim checkCount
 	checkCount =0
 	Do
-		TracePrint  "升级建筑循环中"
+		TracePrint "升级建筑循环中"
+		dm.MoveR 10, 30
+		Delay 100
 		lastCheckTime = lastCheckTime - 30
 		TracePrint "lastCheckTime  ::"&lastCheckTime
 		If lastCheckTime <= 0 Then 
@@ -1789,8 +1791,9 @@ Sub 升级建筑
 			升级农场石头 
 			升级可以升级的建筑 
 			checkCount =checkCount+1
-			lastCheckTime = 15 * checkCount
-			TracePrint  "下一次升级建筑时间:"&lastCheckTime
+			lastCheckTime = 60 * checkCount
+			TracePrint "下一次升级建筑时间:" & lastCheckTime
+//			全力征兵
 		End If
 	
 		Delay 30000
@@ -1800,14 +1803,13 @@ End Sub
 
 Sub 自动铺路
 	TracePrint "进入自动铺路递归"
-
-	跳转回主界面
-
 	
 
 	
-			If 当前位置(0) = 目标位置(0) and 当前位置(0) = 目标位置(0) Then 
-			
+
+	
+			If 当前位置(0) = 目标位置(0) and 当前位置(1) = 目标位置(1) Then 
+				Exit Sub
 			Else
 			Dim direction
 			Dim strDes
@@ -1851,22 +1853,31 @@ Sub 自动铺路
 			TracePrint "目标位置(1)  ====  " & 目标位置(1)
 			TracePrint "当前位置(0)  ====  " & 当前位置(0)
 			TracePrint "当前位置(1)  ====  "&当前位置(1)
-			TracePrint "direction  ====  "&direction
-			遍历顺序 = 获得遍历顺序(direction)
+			TracePrint "direction  ====  " & direction
 			
+			Randomize
+			//得到 1~99999999 之间的一个随机数
+			x = (Int((15 * Rnd) + 1) mod 3 )-1
+			
+			direction=direction+x
 			For i = 0 To 5
-			 Dim temp(1)
-			 temp(0) = 当前位置(0) + 遍历顺序(i)(0)
-			 temp(1) = 当前位置(1) + 遍历顺序(i)(1)
+			 
+			 temp = getNextPoint (当前位置(0),当前位置(1) ,(direction+i) mod 6)
+			If temp(0) = 目标位置(0) and temp(1) = 目标位置(1) Then 
+				当前位置(0) = temp(0)
+				当前位置(1) = temp(1)
+				Exit For
+			End If
 			
 			 ret = 获取位置信息(temp(0), temp(1))
 			 TracePrint "地块主人 " & ret(0) & "  地块等级 " & ret(1)
 			 Delay 1000
-				If ret(0)  = 0 Then 
+				If ret(0)  = 0  Then 
 					当前位置(0) = temp(0)
 					当前位置(1) = temp(1)
 					Exit For
-				ElseIf ret(0) = 3 and ret(1) < 2 Then
+				ElseIf ret(0) = 3 and ret(1) < 铺路等级 Then
+				TracePrint "当前位置变成 "& temp(0) &"，"&temp(1)
 					攻占一块土地 temp(0),temp(1)
 					当前位置(0) = temp(0)
 					当前位置(1) = temp(1)
@@ -1876,9 +1887,10 @@ Sub 自动铺路
 					TracePrint "地块主任 "&ret(0)  &"  地块等级 "&ret(1)
 				End If
 			Next
-			
+				自动铺路
 			End If
-			自动铺路 
+			
+			 
 	
 	End Sub
 	
@@ -1886,41 +1898,53 @@ Sub 自动铺路
 	
 	
 	
-	Function 获得遍历顺序(index)
-		Dim A(1), B(1), C(1), D(1), E(1), F(1)//代表8个方向
-		//381, 1439
-		// 左上 380 1439  左下 380 1440  下 381 1440  右下382 1440  右上382 1439  上 381, 1438  
+	Function getNextPoint(x, y, derection)
+		////derection :: 0:左上  1：左下 2：下 3 右下 4 右上  5 上
+		Dim Point(1)
+		Select Case derection
+			Case 0
 			
-		A(0) = - 1 
-		A(1) = 0
-		
-		B(0) = - 1 
-		B(1) = 1
-		
-		C(0) = 0 
-		C(1) = 1
-		
-		D(0) = 1 
-		D(1) = 0
-		
-		E(0) = 1
-		E(1) = -1
-		
-		F(0) = 0
-		F(1) = -1
-		
-		Dim 遍历顺序(5)
-		遍历顺序(0) = A
-		遍历顺序(1) = B
-		遍历顺序(2) = C
-		遍历顺序(3) = D
-		遍历顺序(4) = E
-		遍历顺序(5) = F
-			Dim newArray(5)  ' 新数组
-			For i = 0 To 5
-				newArray(i) = 遍历顺序((i + index) mod 5)
-			Next		
-		获得遍历顺序 = newArray
+				Point(0) = x - 1
+				 If x mod 2 = 0 Then 
+				 	Point(1) = y - 1
+				 Else 
+				 	Point(1) = y
+				 End If 
+			Case 1
+			
+				Point(0) = x - 1
+				 If x mod 2 = 0 Then 
+				 	Point(1) = y 
+				 Else 
+				 	Point(1) = y + 1
+				 End If 
+			Case 2
+			
+				Point(0) = x
+				Point(1) = y + 1
+			
+			Case 3
+			
+				Point(0) = x + 1
+				 If x mod 2 = 0 Then 
+				 	Point(1) = y 
+				 Else 
+				 	Point(1) = y + 1
+				 End If 
+			Case 4
+				
+				Point(0) = x + 1
+				If x mod 2 = 0 Then 
+				 	Point(1) = y - 1
+				 Else 
+				 	Point(1) = y
+				 End If 
+			Case 5
+			
+				Point(0) = x
+				Point(1) = y - 1
+		End Select
+		getNextPoint = Point
 	End Function
 	
 
