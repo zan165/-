@@ -34,20 +34,39 @@ Dim isFindWindow //是否打开窗口
 isFindWindow = 0
 Dim hwnd, dm_ret
 Dim 当前界面
-
+Dim	当前任务,用铜币升级建筑
+	当前任务 = "自动铺路"
+	用铜币升级建筑 = false
 Dim presentLevel
 Dim presentOwn
 Dim presentEnemy
 Dim 主城坐标(1)
 Dim 当前坐标(1)
+
+
+
 Dim 目标位置(1)
-	目标位置(0) = 516
-	目标位置(1) = 1218
+	目标位置(0) = 437
+	目标位置(1) = 243
 Dim 当前位置(1)
-	当前位置(0) = 508
-	当前位置(1) = 1211
+	当前位置(0) = 434
+	当前位置(1) = 240
 	铺路等级 = 4
 isFindZhuCheng = false
+
+Dim 自动打地等级
+	自动打地等级 =5
+
+
+土地文件 = "D:\ajjl\土地信息.ini"
+
+
+Dim 缓存土地敌人信息
+ 	缓存土地敌人信息 ="D:\ajjl\缓存土地敌人信息.ini"
+
+Dim 缓存土地守卫信息
+	缓存土地守卫信息="D:\ajjl\缓存土地守卫信息.ini"
+
 
 Call main
 
@@ -105,7 +124,7 @@ Sub 获取当前路径
 	//下面这句是获得(当前路径)
 	Path = Plugin.Sys.GetDir(0)
 	MessageBox "获得路径："& Path
-	EndScript 
+	 
 	//=================================================================================
 End Sub
 
@@ -283,6 +302,79 @@ Sub 注册佐晓鹭
 //	
 
 End Sub
+
+Sub 清理缓存文件
+	IsFile = Plugin.File.IsFileExist(缓存土地敌人信息)
+	If IsFile Then 
+		Call Plugin.File.DeleteFile(缓存土地敌人信息)
+	End If
+	
+	IsFile = Plugin.File.IsFileExist(缓存土地守卫信息)
+	If IsFile Then 
+		Call Plugin.File.DeleteFile(缓存土地守卫信息)
+	End If
+	
+	
+End Sub
+
+
+Function 读取守卫信息(Command,Val)
+	//下面这句是读取一个配置文件参数(小节名："Command" 键值名："Val")得到内容(Text )
+	Text = 读取(Command, Val, 缓存土地守卫信息)
+	TracePrint "读取土地信息键值为：" & Text
+	读取守卫信息 = Text
+End Function
+
+Function 写入守卫信息(Command,Val,内容)
+	//下面这句是保存一个配置文件参数(小节名："Command" 键值名："Val" 写入内容："内容")
+	Call 写入(Command, Val, 内容, 缓存土地守卫信息)
+	TracePrint "保存一个配置文件键值"
+	
+End Function
+
+
+
+Function 读取敌人信息(Command,Val)
+	//下面这句是读取一个配置文件参数(小节名："Command" 键值名："Val")得到内容(Text )
+	Text = 读取(Command, Val, 缓存土地敌人信息)
+	TracePrint "读取土地信息键值为：" & Text
+	读取敌人信息 = Text
+End Function
+
+Function 写入敌人信息(Command,Val,内容)
+	//下面这句是保存一个配置文件参数(小节名："Command" 键值名："Val" 写入内容："内容")
+	Call 写入(Command, Val, 内容, 缓存土地敌人信息)
+	TracePrint "保存一个配置文件键值"
+	
+End Function
+
+
+
+Function 读取土地信息(Command,Val)
+	//下面这句是读取一个配置文件参数(小节名："Command" 键值名："Val")得到内容(Text )
+	Text = 读取(Command, Val, 土地文件)
+	TracePrint "读取土地信息键值为：" & Text
+	读取土地信息 = Text
+End Function
+
+Function 写入土地信息(Command,Val,内容)
+	//下面这句是保存一个配置文件参数(小节名："Command" 键值名："Val" 写入内容："内容")
+	Call 写入(Command, Val, 内容, 土地文件)
+	TracePrint "保存一个配置文件键值"
+	
+End Function
+
+
+Function 读取(Command, Val, path)
+	//下面这句是读取一个配置文件参数(小节名："Command" 键值名："Val")得到内容(Text )
+	Text = Plugin.File.ReadINI(Command, Val, path)
+	读取 = Text
+End Function
+
+Function 写入(Command, Val, 内容, path)
+	//下面这句是保存一个配置文件参数(小节名："Command" 键值名："Val" 写入内容："内容")
+	Call Plugin.File.WriteINI(Command, Val, 内容, path)
+End Function
 
 //=====================================================================================================
 ////、、、、、、、、、、、、、、、、、、、、、、、、以下都是工具函数、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
@@ -652,10 +744,9 @@ End Sub
 Sub 判断当前任务
 	Delay 1000
 	
-	当前任务 = "自动铺路"
-	用铜币升级建筑 = false
+
 	
-	TracePrint "当前界面名字是"&当前界面
+	TracePrint "当前任务名字是 "&当前任务
 End Sub
 
 
@@ -722,7 +813,7 @@ Sub 跳转到坐标(aimx, aimy)
     	
     Else 
     	TracePrint "没有找到地图按钮"
-    	EndScript
+    	
 	End If
 	
 	Delay 1000
@@ -789,7 +880,7 @@ Sub 跳转到坐标(aimx, aimy)
     	
     Else 
     	TracePrint "没有找到前往按钮"
-    	EndScript
+    	
 	End If
 
 	Delay 1500
@@ -798,8 +889,14 @@ End Sub
 
 Sub 攻占(aimx,aimy)
 	TracePrint "我将发起冲锋"
+	TracePrint "当前位置(0) "&当前位置(0)
+	TracePrint "当前位置(1) "&当前位置(1)
+	TracePrint "aimx "&aimx
+	TracePrint "aimy "&aimy
+	If 当前位置(0) <> aimx or 当前位置(1) <> aimy Then 
+		跳转到坐标 aimx,aimy
+	End If
 	
-	跳转到坐标 aimx,aimy
 	//地的等级
 	//TODO
 	//点击攻占按钮
@@ -812,7 +909,7 @@ Sub 攻占(aimx,aimy)
     	
     Else 
     	TracePrint "没有找到攻占按钮"
-    	EndScript
+    	
 	End If
 	Delay 1500
 	
@@ -853,7 +950,7 @@ Sub 攻占(aimx,aimy)
     	
     Else 
     	TracePrint "没有找到攻占按钮"
-    	EndScript
+    	
 	End If
 	
 	
@@ -980,54 +1077,78 @@ End Sub
 Function 获取位置信息(aimx, aimy)
 
 	Dim 土地信息(2)
-//	跳转到坐标 381, 1439
-	跳转到坐标 aimx, aimy
-	Delay 1000
-	txt = Plugin.ZXLOCR.QSOCR(5,76,1176,668, 0)
-//	TracePrint txt
-
-	Dim 土地(10)
-	土地(0)="空地"
-	土地(1)="1级"
-	土地(2)="2级"
-	土地(3)="3级"
-	土地(4)="4级"
-	土地(5)="5级"
-	土地(6)="6级"
-	土地(7)="7级"
-	土地(8)="8级"
-	土地(9)="9级"
-	土地(10)="10级"
-
-
+	
 	地块等级 = null
 	
 	地块主人 = null
 	地块兵种 = null
-	index = 0
-	For 11
+	
+	txt= 读取土地信息(aimx , aimy)
+	
+	
+	
+	
+//	跳转到坐标 381, 1439
+	跳转到坐标 aimx, aimy
+	Delay 1000
+	If  txt <> "" Then 
 		
-
-	If InStr(txt, 土地(index)) > 0 Then 
-		TracePrint "这是"&土地(index)&"地"
-		地块等级 = index
-		Exit For
+		地块等级 = Int(txt)	
 		
+	Else
+	
+			txt = Plugin.ZXLOCR.TTOCR(5, 76, 1176, 668, 0)
+			
+		//	TracePrint txt
+		
+			Dim 土地(12)
+			土地(0)="空地"
+			土地(1)="1级"
+			土地(2)="2级"
+			土地(3)="3级"
+			土地(4)="4级"
+			土地(5)="5级"
+			土地(6)="6级"
+			土地(7)="7级"
+			土地(8)="8级"
+			土地(9)="9级"
+			土地(10)="10级"
+			土地(11)="特殊地形"
+			土地(12)="山"
+		
+			index = 0
+			For 11
+				
+		
+			If InStr(txt, 土地(index)) > 0 Then 
+				TracePrint "这是"&土地(index)&"地"
+				地块等级 = index
+				Exit For
+				
+			End If
+		
+			index=index+1	
+			Next
+			If 地块等级 <= 10 Then 
+				写入土地信息 aimx,aimy,地块等级
+			End If
 	End If
-
-	index=index+1	
-	Next
 	
-	
-	If canFind(0, 70, 1200, 800, "扫荡") Then
+	If canFind(0, 70, 1200, 800, "扫荡") or canFind(0, 70, 1200, 800, "扫荡0") Then
 		地块主人 = 0
-	ElseIf canFind(0, 70, 1200, 800, "入城") Then
+	ElseIf canFind(0, 70, 1200, 800, "入城" )or canFind(0, 70, 1200, 800, "筑城") Then
 		地块主人 = 0
 	ElseIf canFind(0, 70, 1200, 800, "敌人") Then
 		地块主人 = 2
-	Elseif canFind(0, 70, 1200, 800, "gzan") Then
+	ElseIf canFind(0, 70, 1200, 800, "侦查") Then
 		地块主人 = 3
-	Else 
+	ElseIf canFind(0, 70, 1200, 800, "gzan") Then
+		地块主人 = 3
+	ElseIf canFind(0, 70, 1200, 800, "情报") Then
+		地块主人 = 3
+	ElseIf canFind(0, 70, 1200, 800, "不可侦查") Then
+		地块主人 = 3
+	ElseIf canFind(0, 70, 1200, 800, "盟友") Then
 		地块主人 = 1
 	End If
 	
@@ -1035,6 +1156,8 @@ Function 获取位置信息(aimx, aimy)
 	土地信息(0) = 地块主人
 	土地信息(1) = 地块等级
 	土地信息(2) = 地块兵种
+	
+	
 	
 	获取位置信息 = 土地信息
 	
@@ -1084,387 +1207,6 @@ Sub 获取地周围的几块地的信息(nowx, nowy)
 	
 	
 End Sub
-
-Sub 做新手引导
-//
-////对话
-//	For 10
-//	
-//	
-//	Delay 1000
-//	
-//	dm.moveto 1100 , 600
-//	dm.leftclick 
-//	
-//	Next
-//
-//
-////点击招募
-//	dm.moveto 840 ,700
-//	
-//	Delay 1000
-//	dm.leftclick
-////点击新手招募
-//	dm.moveto 724 ,569
-//	
-//	Delay 1000
-//	dm.leftclick
-//
-////点击两次
-
-//dm.moveto 1114, 20
-//
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-		
-		//返回
-//dm.moveto 1114, 20
-//
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-
-//
-//dm.moveto 1114, 20
-//
-//		Delay 1100
-//		dm.leftclick 
-	
-	/////点主城
-	
-//dm.moveto 560, 300
-//
-//		Delay 1100
-//		dm.leftclick 
-
-
-////点第一个队伍
-//dm.moveto 110, 680
-//
-//		Delay 1100
-//		dm.leftclick 
-//		
-		
-		////第一个武将位置
-
-//dm.moveto 394, 292
-//		Delay 1100
-//		dm.leftclick 
-		
-		
-//dm.moveto 1139, 209
-//		Delay 1100
-//		dm.leftclick 
-		
-//		////第二个武将位置
-//
-//dm.moveto 586, 304
-//		Delay 1100
-//		dm.leftclick 
-//
-//dm.moveto 1139, 282
-//		Delay 1100
-//		dm.leftclick 
-
-//   快速分兵
-//dm.moveto 131, 724
-//		Delay 1100
-//		dm.leftclick 
-		
-//			//确认
-//dm.moveto 1033, 647
-//		Delay 1100
-//		dm.leftclick
-//		
-		
-		
-//				//返回
-//dm.moveto 1114, 20
-//
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-
-
-//点击攻占按钮
-//:findgongji
-//
-//	dm_ret = dm.FindPic(0,0,1166,670,"D:\ajjl\gzan.bmp||D:\ajjl\刀.bmp","000000",0.9,0,intX,intY)
-//	If intX >= 0 and intY >= 0 Then
-//    	TracePrint "找到攻占按钮"
-//    	dm.moveTo intX, intY
-//    	Delay 1000
-//    	dm.leftclick
-//    	
-//    Else 
-//    	Delay 1500
-//    	
-//	End If
-//	Delay 1500
-//
-
-//dm.moveto 600, 680
-//
-//		Delay 1100
-//		dm.leftclick 
-		
-		//
-//dm.moveto 930, 510
-//
-//		Delay 1100
-//		dm.leftclick
- 
- 
-//	移动到 "跳过"
-//	Delay 1000
-//	dm.leftclick
-//		
-//		
-//	Delay 1000
-//	移动到 "获得"
-//	Delay 1000
-//	dm.leftclick
-//	Delay 1000
-//	dm.leftclick
-//	Delay 1000
-//	dm.leftclick
-	
-	
-//		移动到 "回城"
-//	Delay 1000
-//	dm.leftclick 
-//	
-	
-	
-				
-//dm.moveto 1114, 20
-//
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-//		
-//		Delay 5000
-//		
-//dm.moveto 1114, 20
-//
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-	
-	
-		/////点主城
-	
-//dm.moveto 585, 346
-//
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 800
-//dm.moveto 585, 346
-//
-//		Delay 1100
-//		dm.leftclick 
-
-	
-//点第一个队伍
-//dm.moveto 110, 680
-//
-//		Delay 1100
-//		dm.leftclick 
-		//第一武将加号
-//dm.moveto 1072, 423
-//
-//		Delay 1100
-//		dm.leftclick 
-//		
-
-
-//dm.moveto 920, 350
-//
-//		Delay 1100
-//		dm.leftclick 
-	
-//	dm.moveto 1114, 20
-//
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-//		
-//		Delay 5000
-		
-
-//dm.moveto 580, 343
-//
-//		Delay 1100
-//		dm.leftclick 
-	
-//	//点击行军按钮
-//
-//
-//	dm_ret = dm.FindPic(0,0,1166,670,"D:\ajjl\行军.bmp||D:\ajjl\马.bmp","000000",0.9,0,intX,intY)
-//	If intX >= 0 and intY >= 0 Then
-//    	TracePrint "找到行军按钮"
-//    	dm.moveTo intX, intY
-//    	Delay 1000
-//    	dm.leftclick
-//    	
-//    Else 
-//    TracePrint "没有找到行军按钮"
-//    	Delay 1500
-//    	
-//	End If
-//	Delay 1500
-
-	
-//dm.moveto 600, 680
-//
-//		Delay 1100
-//		dm.leftclick 
-	
-	
-//	dm.moveto 930, 510
-//
-//		Delay 1100
-//		dm.leftclick
- 
-// Delay 5000
-// 
-//		移动到 "跳过"
-//	Delay 1000
-//	dm.leftclick
-//	
-
-
-//	Delay 1000
-//	移动到 "获得"
-//	Delay 1000
-//	dm.leftclick
-//	Delay 1000
-//	dm.leftclick
-//	Delay 1000
-//	dm.leftclick
-//	
-//	
-//		移动到 "回城"
-//	Delay 1000
-//	dm.leftclick 
-	
-//		dm.moveto 1114, 20
-//
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-//		
-//		Delay 5000
-
-
-
-//	
-//	///点主城
-//	
-//dm.moveto 585, 346
-//
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 800
-//dm.moveto 585, 346
-//
-//		Delay 1100
-//		dm.leftclick 
-//
-//
-//点第一个队伍
-//dm.moveto 110, 680
-//
-//		Delay 1100
-//		dm.leftclick 
-//		
-//		
-//		//第一个武将位置
-//
-//dm.moveto 394, 292
-//		Delay 1100
-//		dm.leftclick 
-//		
-//		
-//dm.moveto 1139, 209
-//		Delay 1100
-//		dm.leftclick 
-
-
-//		移动到 "下阵"
-//
-//		Delay 1100
-//		dm.leftclick 
-		
-		
-//		移动到 "确认"
-//
-//		Delay 1100
-//		dm.leftclick 
-
-
-
-		////第一个武将位置
-
-//dm.moveto 394, 292
-//		Delay 1100
-//		dm.leftclick 
-		
-		
-		//上阵第二个武将 关平
-//dm.moveto 1139, 282
-//		Delay 1100
-//		dm.leftclick 
-//
-
-
-		//返回
-//dm.moveto 1114, 20
-//
-//		Delay 1100
-//		dm.leftclick 
-//		Delay 1100
-//		dm.leftclick 
-//
-
-
-
-
-
-End Sub
-
 
 
 Sub 点击招募按钮
@@ -1572,32 +1314,32 @@ Sub 去升级这个建筑
 	End If
 End Sub
 
-Sub 获取地块信息(x, y)
-	跳转回主界面
-	主界面点坐标 
-	跳转到坐标 x, y
-	
-	While isFindZhuCheng = False
-	
-		//网络调用ocr
-		txt = Plugin.ZXLOCR.QSOCR(4,63,1200,800, 0)
-		TracePrint txt
-		//部队地标星内3/3(511,1459
-		
-		
-		 抓取坐标 txt
-		 
-		 
-		If 当前坐标(0) <> 主城坐标(0) and 当前坐标(1) <> 主城坐标(1) Then 
-			isFindZhuCheng = true
-			
-		End If
-		TracePrint 当前坐标(0)
-		 TracePrint 当前坐标(1)
-	Wend
-	
-	
-End Sub
+//Sub 获取地块信息(x, y)
+//	跳转回主界面
+//	主界面点坐标 
+//	跳转到坐标 x, y
+//	
+//	While isFindZhuCheng = False
+//	
+//		//网络调用ocr
+//		txt = Plugin.ZXLOCR.QSOCR(4,63,1200,800, 0)
+//		TracePrint txt
+//		//部队地标星内3/3(511,1459
+//		
+//		
+//		 抓取坐标 txt
+//		 
+//		 
+//		If 当前坐标(0) <> 主城坐标(0) and 当前坐标(1) <> 主城坐标(1) Then 
+//			isFindZhuCheng = true
+//			
+//		End If
+//		TracePrint 当前坐标(0)
+//		 TracePrint 当前坐标(1)
+//	Wend
+//	
+//	
+//End Sub
 
 
 Sub 获取主城信息
@@ -1607,7 +1349,7 @@ Sub 获取主城信息
 	While isFindZhuCheng = False
 	
 		//网络调用ocr
-		txt = Plugin.ZXLOCR.QSOCR(951,63,1177,161, 0)
+		txt = Plugin.ZXLOCR.TTOCR(951,63,1177,161, 0)
 		TracePrint txt
 		//部队地标星内3/3(511,1459
 		
@@ -1708,6 +1450,7 @@ Do
 	End If
 	If canFind(0,70,1200,650,"点击进行部队配置")= True Then 
 		去点击 "编制"
+		去点击 "兵力"
 	End If
 	If canFind(0,70,1200,650,"加号")= True Then 
 		去点击 "加号"
@@ -1770,6 +1513,63 @@ End Sub
 
 //=====================================================================================================
 ////、、、、、、、、、、、、、、、、、、、、、、、、以下都功能区域、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+
+Sub 每30分钟判断一次
+	
+End Sub
+
+Sub 定时任务
+	
+End Sub
+
+Sub 探查周边信息
+	//主城坐标  1436 549
+	//主城周围有16个方向
+	
+	
+	
+	
+	
+End Sub
+
+
+Sub 延时占领
+	Delay 1000
+	
+	path = "D:\ajjl\目标坐标.txt"    
+	fileHandle=Plugin.File.OpenFile(path)     
+	fileline = Plugin.File.ReadLine(fileHandle)
+	  
+	Call Plugin.File.CloseFile(fileHandle)
+	
+	Dim lenOfStr
+	lenOfStr = Len(fileline)
+	
+	TracePrint "文件第一行内容是 " & fileline
+	
+	
+	Join(字符串数组)
+
+	
+	
+End Sub
+
+
+Sub 扫荡(位置)
+	跳转回主界面 
+	补充队伍一兵力 
+	跳转回主界面
+	跳转到坐标 目标位置(0) ,目标位置(1) 
+	去点击 "扫荡"
+	去点击 "扫荡0"
+	
+	去点击 "士气"
+	去点击 "兵力"
+	去点击 "取消自动回城按钮"
+	去点击 "确认扫荡"
+	去点击 "坚持"
+End Sub
+
 
 
 Sub 升级建筑
@@ -1856,30 +1656,31 @@ Sub 自动铺路
 //			x = (Int((15 * Rnd) + 1) mod 3 )-1
 //			
 //			direction=direction+x
-			For i = 0 To 5
+			points = getNextPoints(当前位置(0), 当前位置(1), (direction + i) mod 6)
+//			TracePrint String.Join(",", points)
 			 
-			 temp = getNextPoint (当前位置(0),当前位置(1) ,(direction+i) mod 6)
-			If temp(0) = 目标位置(0) and temp(1) = 目标位置(1) Then 
-				当前位置(0) = temp(0)
-				当前位置(1) = temp(1)
+			For i = 0 To 5
+			If points(i)(0) = 目标位置(0) and points(i)(1) = 目标位置(1) Then 
+				当前位置(0) = points(i)(0)
+				当前位置(1) = points(i)(1)
 				Exit For
 			End If
 			
-			 ret = 获取位置信息(temp(0), temp(1))
+			 ret = 获取位置信息(points(i)(0), points(i)(1))
 			 TracePrint "地块主人 " & ret(0) & "  地块等级 " & ret(1)
 			 Delay 1000
 			 
-				If ret(0)  = 0  and abs(temp(0)-目标位置(0))+abs(temp(1)-目标位置(1)) < abs(当前位置(0)-目标位置(0))+abs(当前位置(0)-目标位置(1))Then 
-//					当前位置(0) = temp(0)
-//					当前位置(1) = temp(1)
-//					Exit For
-				TracePrint "地块主人是自己 跳过 "
+				If ret(0) = 0 Then 
+					
+					TracePrint "地块主人是自己 "
+					
 				ElseIf ret(0) = 3 and ret(1) < 铺路等级 Then
-				TracePrint "当前位置变成 "& temp(0) &"，"&temp(1)
-//					攻占一块土地 temp(0),temp(1)
-					当前位置(0) = temp(0)
-					当前位置(1) = temp(1)
-//					Delay 2 * 60000 + 6000
+				TracePrint "当前位置变成 "& points(i)(0) &"，"&points(i)(1)
+					当前位置(0) = points(i)(0)
+					当前位置(1) = points(i)(1)
+					攻占一块土地 points(i)(0),points(i)(1)
+					
+					Delay  120000
 					Exit For
 				Else 
 					TracePrint "地块主任 "&ret(0)  &"  地块等级 "&ret(1)
@@ -1896,53 +1697,68 @@ Sub 自动铺路
 	
 	
 	
-	Function getNextPoint(x, y, derection)
+	Function getNextPoints(x, y, firstDirection)
 		////derection :: 0:左上  1：左下 2：下 3 右下 4 右上  5 上
-		Dim Point(1)
-		Select Case derection
-			Case 0
-			
-				Point(0) = x - 1
-				 If x mod 2 = 0 Then 
-				 	Point(1) = y - 1
-				 Else 
-				 	Point(1) = y
-				 End If 
-			Case 1
-			
-				Point(0) = x - 1
-				 If x mod 2 = 0 Then 
-				 	Point(1) = y 
-				 Else 
-				 	Point(1) = y + 1
-				 End If 
-			Case 2
-			
-				Point(0) = x
-				Point(1) = y + 1
-			
-			Case 3
-			
-				Point(0) = x + 1
-				 If x mod 2 = 0 Then 
-				 	Point(1) = y 
-				 Else 
-				 	Point(1) = y + 1
-				 End If 
-			Case 4
+		Dim Points(5)
+		Dim Directions(5)
+		Directions(0) = firstDirection
+		
+		Directions(1) = (firstDirection +1) mod 6
+		Directions(2) = (firstDirection -1) mod 6
+		Directions(3) = (firstDirection +2) mod 6
+		Directions(4) = (firstDirection -2) mod 6
+		Directions(5) = (firstDirection +3) mod 6
+		
+		For i = 0 To 5
+			derection = Directions(i)
+			Dim Point(1)
+			Select Case derection
+				Case 0
 				
-				Point(0) = x + 1
-				If x mod 2 = 0 Then 
-				 	Point(1) = y - 1
-				 Else 
-				 	Point(1) = y
-				 End If 
-			Case 5
-			
-				Point(0) = x
-				Point(1) = y - 1
-		End Select
-		getNextPoint = Point
+					Point(0) = x - 1
+				 	If x mod 2 = 0 Then 
+				 		Point(1) = y - 1
+				 	Else 
+				 		Point(1) = y
+				 	End If 
+				Case 1
+				
+					Point(0) = x - 1
+				 	If x mod 2 = 0 Then 
+				 		Point(1) = y 
+				 	Else 
+				 		Point(1) = y + 1
+				 	End If 
+				Case 2
+				
+					Point(0) = x
+					Point(1) = y + 1
+				
+				Case 3
+				
+					Point(0) = x + 1
+				 	If x mod 2 = 0 Then 
+				 		Point(1) = y 
+				 	Else 
+				 		Point(1) = y + 1
+				 	End If 
+				Case 4
+					
+					Point(0) = x + 1
+					If x mod 2 = 0 Then 
+				 		Point(1) = y - 1
+				 	Else 
+				 		Point(1) = y
+				 	End If 
+				Case 5
+				
+					Point(0) = x
+					Point(1) = y - 1
+			End Select
+			Points(i) =Point
+		Next
+		
+		getNextPoints = Points
 	End Function
 	
 
@@ -1965,7 +1781,7 @@ Sub main
 	判断当前任务 
 	
 	
-	
+	清理缓存文件
 	
 	
 	
@@ -1974,6 +1790,10 @@ Sub main
 //	获取位置信息
 //	当前任务 = "征兵"
 
+//	获取主城信息
+
+	
+	Do 
 	
 	If 当前任务 = "新手引导" Then 
 			新手引导 
@@ -1989,12 +1809,28 @@ Sub main
 	End If
 	
 	
-	If 当前任务 = "自动打地" Then
-		自动打地 
+	If 当前任务 = "扫荡" Then 
+		For 10
+			扫荡 目标位置
+			Delay 65*1000
+		Next
 	End If
 	
 	
-//	从主城占领一块土地 510 ,1464
+	If 当前任务 = "延时占领" Then 
+		For 10
+			延时占领 
+		Next
+	End If
+	
+	
+	TracePrint "一分钟后重新开始任务"
+	Delay 60000
+	Loop
+	
+//	
+//占领一块土地 510, 1464
+
 	
 //	获取主城信息 
 //	获取地块信息 507,1459
