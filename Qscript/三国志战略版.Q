@@ -10,7 +10,7 @@ RunOnce=1
 EnableWindow=
 MacroID=5df7f713-f770-44de-8331-d1bc8eb60e53
 Description=三国志战略版
-Enable=1
+Enable=0
 AutoRun=0
 [Repeat]
 Type=0
@@ -35,19 +35,21 @@ isFindWindow = 0
 Dim hwnd, dm_ret
 Dim 当前界面
 Dim	当前任务,用铜币升级建筑
-	当前任务 = "自动铺路"
+	当前任务 = "else"
 	用铜币升级建筑 = false
 Dim presentLevel
 Dim presentOwn
 Dim presentEnemy
 Dim 主城坐标(1)
 Dim 当前坐标(1)
+Dim 铺路队伍
 
+铺路队伍 = 2
 
 
 Dim 目标位置(1)
-	目标位置(0) = 437
-	目标位置(1) = 243
+	目标位置(0) = 439
+	目标位置(1) = 230
 Dim 当前位置(1)
 	当前位置(0) = 434
 	当前位置(1) = 240
@@ -66,6 +68,11 @@ Dim 缓存土地敌人信息
 
 Dim 缓存土地守卫信息
 	缓存土地守卫信息="D:\ajjl\缓存土地守卫信息.ini"
+
+
+Dim 第几次升级建筑
+
+第几次升级建筑 = 0
 
 
 Call main
@@ -999,6 +1006,17 @@ Sub 攻占一块土地(aimx,aimy)
 	
 End Sub
 
+Sub 指定队伍攻占(aimx, aimy, 队伍)
+	If 当前界面 = "主界面" Then 
+		攻占 aimx,aimy
+	Else 
+		TracePrint "不在主界面，需要跳转回主界面"
+		跳转回主界面 
+		Delay 1000
+		指定队伍攻占 aimx, aimy , 队伍
+	End If
+End Sub
+
 Sub 从主城占领一块土地(aimx, aimy)
 	跳转回主界面 
 	
@@ -1574,6 +1592,8 @@ End Sub
 
 Sub 升级建筑
 	TracePrint "升级建筑"
+	dm.moveR 10, 10
+	
 	跳转回主界面 
 	
 	Dim lastCheckTime
@@ -1810,10 +1830,11 @@ Sub main
 	
 	
 	If 当前任务 = "扫荡" Then 
-		For 10
+		For 13
 			扫荡 目标位置
-			Delay 65*1000
+			Delay 120*1000
 		Next
+		当前任务 = "升级建筑"
 	End If
 	
 	

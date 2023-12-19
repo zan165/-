@@ -10,7 +10,7 @@ RunOnce=1
 EnableWindow=
 MacroID=328ca855-ffc1-4b15-9cc2-c838a264ec82
 Description=三战高清
-Enable=1
+Enable=0
 AutoRun=0
 [Repeat]
 Type=0
