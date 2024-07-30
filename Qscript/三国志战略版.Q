@@ -10,7 +10,7 @@ RunOnce=1
 EnableWindow=
 MacroID=5df7f713-f770-44de-8331-d1bc8eb60e53
 Description=三国志战略版
-Enable=0
+Enable=1
 AutoRun=0
 [Repeat]
 Type=0
@@ -35,7 +35,7 @@ isFindWindow = 0
 Dim hwnd, dm_ret
 Dim 当前界面
 Dim	当前任务,用铜币升级建筑
-	当前任务 = "else"
+	当前任务 = "日常模式"
 	用铜币升级建筑 = false
 Dim presentLevel
 Dim presentOwn
@@ -48,8 +48,8 @@ Dim 铺路队伍
 
 
 Dim 目标位置(1)
-	目标位置(0) = 439
-	目标位置(1) = 230
+	目标位置(0) = 1331
+	目标位置(1) = 921
 Dim 当前位置(1)
 	当前位置(0) = 434
 	当前位置(1) = 240
@@ -606,9 +606,9 @@ Function 获取界面名
 	
 	//是否是主界面
 	
-	dm_ret = dm.FindPic(260,650,900,800,"D:\ajjl\招募.bmp","000000",0.9,0,intX,intY)
+	dm_ret = dm.FindPic(260,650,900,800,"D:\ajjl\主界面招募.bmp","000000",0.9,0,intX,intY)
 	If intX >= 0 and intY >= 0 Then
-    	TracePrint "找到招募"
+    	TracePrint "找到主界面招募"
     	当前界面 = "主界面"
     	Exit Function
 	End If
@@ -1020,7 +1020,7 @@ End Sub
 Sub 从主城占领一块土地(aimx, aimy)
 	跳转回主界面 
 	
-	补充队伍一兵力 
+	补充队伍兵力 "一队" 
 	跳转回主界面
 	攻占一块土地 aimx, aimy
 End Sub
@@ -1039,14 +1039,14 @@ Sub 进入主城
 	当前界面 = "主城界面"
 End Sub
 
-Sub 进入队伍一
+Sub 进入队伍(队伍名)
 	进入主城 
-	点击 "一队"
+	点击 队伍名
 	
 End Sub
 
-Sub 补充队伍一兵力
-	进入队伍一 
+Sub 补充队伍兵力(队伍名)
+	进入队伍 队伍名 
 	点击 "快速分兵"
 	点击 "确认分兵"
 End Sub
@@ -1229,14 +1229,14 @@ End Sub
 
 Sub 点击招募按钮
 	If 当前界面 = "主界面" Then 
-		去点击 "招募"
+		去点击 "主界面招募"
 	End If
 	
 	
 End Sub
 
 Sub 点击返回按钮
-	dm_ret = dm.FindPic(1000,0,1190,150,"D:\ajjl\fhan.bmp||D:\ajjl\fhan2.bmp||D:\ajjl\fhan3.bmp||D:\ajjl\fhan4.bmp||D:\ajjl\fhan5.bmp||D:\ajjl\xan.bmp||D:\ajjl\x2an.bmp","000000",0.9,0,intX,intY)
+	dm_ret = dm.FindPic(1000,0,1190,150,"D:\ajjl\主返回.bmp||D:\ajjl\建筑返回.bmp||D:\ajjl\fhan3.bmp||D:\ajjl\fhan4.bmp||D:\ajjl\fhan5.bmp||D:\ajjl\fhan6.bmp||D:\ajjl\xan.bmp||D:\ajjl\x2an.bmp","000000",0.9,0,intX,intY)
 	If intX >= 0 and intY >= 0 Then
     	TracePrint "找到返回按钮"
     	dm.moveTo intX, intY
@@ -1248,6 +1248,18 @@ Sub 点击返回按钮
 	End If
 End Sub
 
+Sub 点击主界面任务按钮
+	dm_ret = dm.FindPic(100,100,1190,1800,"D:\ajjl\主界面任务01.bmp||D:\ajjl\主界面任务02.bmp||D:\ajjl\主界面任务03.bmp||D:\ajjl\主界面任务04.bmp||D:\ajjl\主界面任务05.bmp","000000",0.9,0,intX,intY)
+	If intX >= 0 and intY >= 0 Then
+    	TracePrint "找到主界面任务按钮"
+    	dm.moveTo intX, intY
+    	Delay 1000
+    	dm.leftclick
+    	
+    Else 
+    	TracePrint "没有找到主界面任务按钮"	
+	End If
+End Sub
 
 Sub 升级主城仓库
 		TracePrint "升级主城仓库"
@@ -1435,6 +1447,9 @@ Dim shouldChou
 shouldChou = True
 
 Do
+
+TracePrint "。。。"
+鼠标点击 590, 340
 	Delay 300
 	If canFind(0, 70, 1200, 650, "一木难扶") Then 
 		当前任务 = "升级建筑"
@@ -1445,19 +1460,27 @@ Do
 		Exit Do
 	End If
 	
-	去点击 "下一步"
-	鼠标点击 590, 340
-	点击返回按钮
+	If canFind(0,70,1200,800,"今日签到奖励确认按钮")= True Then 
+		去点击 "今日签到奖励确认按钮"
+		当前任务 = "升级建筑"
+		去点击 "一木难扶"
+		LogStart "D:\a.log"
+		TracePrint "三国志战略版结束引导"
+		LogStop
+		Exit Do
+	End If
 	
-	Delay 143
+	If canFind(0,70,1200,650,"下一步")= True Then 
+		去点击 "下一步"
+	End If
 	
-	If shouldChou Then 
-		
-		点击招募按钮
-		If canFind(0,70,1200,650,"招募2次")= True Then 
-			去点击 "招募2次"
-			shouldChou = False
-		End If
+	If canFind(0,70,1200,650,"主界面招募")= True Then 
+		去点击 "主界面招募"
+	End If
+	
+	If canFind(0,70,1200,650,"招募2次")= True Then 
+		去点击 "招募2次"
+		shouldChou = False
 	End If
 	
 	If canFind(0,70,1200,650,"选择主城")= True Then 
@@ -1466,9 +1489,12 @@ Do
 	If canFind(0,70,1200,650,"点击进入主城")= True Then 
 		进入主城
 	End If
-	If canFind(0,70,1200,650,"点击进行部队配置")= True Then 
+	
+	If canFind(0,70,1200,650,"编制")= True Then 
 		去点击 "编制"
-		去点击 "兵力"
+	End If
+	If canFind(0,70,1200,650,"编队界面兵力")= True Then 
+		去点击 "编队界面兵力"
 	End If
 	If canFind(0,70,1200,650,"加号")= True Then 
 		去点击 "加号"
@@ -1500,6 +1526,10 @@ Do
 	If canFind(0,70,1200,800,"兵力")= True Then 
 		去点击 "兵力"
 	End If
+	If canFind(0,70,1200,800,"上阵关平一队兵力")= True Then 
+		去点击 "上阵关平一队兵力"
+	End If
+	
 	If canFind(0,70,1200,800,"兵种选择")= True Then 
 		去点击 "兵种选择"
 	End If
@@ -1515,15 +1545,23 @@ Do
 	If canFind(0,70,1200,800,"确认行军")= True Then 
 		去点击 "确认行军"
 	End If
-	If canFind(0,70,1200,800,"下阵")= True Then 
-		去点击 "下阵"
+	If canFind(0,70,1200,800,"位置1下阵")= True Then 
+		去点击 "位置1下阵"
+	End If
+	
+	If canFind(0,70,1200,800,"位置1下阵2")= True Then 
+		去点击 "位置1下阵2"
 	End If
 	If canFind(0,70,1200,800,"确认按钮")= True Then 
 		去点击 "确认按钮"
 	End If
+	If canFind(0,70,1200,800,"位置1下阵2")= True Then 
+		去点击 "位置1下阵2"
+	End If
 	
 	
 	
+	点击返回按钮
 
 Loop Until 当前任务 <> "新手引导"
 	
@@ -1572,16 +1610,21 @@ Sub 延时占领
 	
 End Sub
 
+Sub 补兵
+	跳转回主界面 
+	补充队伍兵力 "一队" 
+	补充队伍兵力 "二队"
+End Sub
 
 Sub 扫荡(位置)
-	跳转回主界面 
-	补充队伍一兵力 
+	
 	跳转回主界面
 	跳转到坐标 目标位置(0) ,目标位置(1) 
 	去点击 "扫荡"
 	去点击 "扫荡0"
 	
-	去点击 "士气"
+	去点击 "士气1"
+//	去点击 "士气"
 	去点击 "兵力"
 	去点击 "取消自动回城按钮"
 	去点击 "确认扫荡"
@@ -1595,29 +1638,109 @@ Sub 升级建筑
 	dm.moveR 10, 10
 	
 	跳转回主界面 
+	进入建筑界面
 	
-	Dim lastCheckTime
-	lastCheckTime = 30
-	Dim checkCount
-	checkCount =0
-	Do
-		TracePrint "升级建筑循环中"
-		dm.MoveR 10, 30
-		Delay 100
-		lastCheckTime = lastCheckTime - 30
-		TracePrint "lastCheckTime  ::"&lastCheckTime
-		If lastCheckTime <= 0 Then 
-			升级主城仓库 
-			升级农场石头 
-			升级可以升级的建筑 
-			checkCount =checkCount+1
-			lastCheckTime = 60 * checkCount
-			TracePrint "下一次升级建筑时间:" & lastCheckTime
-//			全力征兵
+	TracePrint "升级建筑循环中"
+	dm.MoveR 10, 30
+	Delay 100
+		
+		
+	
+	
+	//升级推荐升级的建筑
+	去点击 "建筑界面内政"
+	
+		//升级仓库
+		If canFind(0,70,1200,800,"推荐升级6")= True Then 
+			去点击 "推荐升级6"
+			去升级这个建筑
 		End If
+	去点击 "建筑界面军事"
+	去点击 "建筑界面守备"
+		
+		
+		
+		
+		
+		
+	//升级主城
+	If canFind(0,70,1200,800,"升0")= True Then 
+		去点击 "升0"
+		去升级这个建筑
+	End If
+		
+	//升级可以升级的建筑
+	去点击 "建筑界面内政"
 	
-		Delay 30000
-	Loop Until 当前任务 <> "升级建筑"
+		//升级石头
+		If canFind(0,70,1200,800,"升1石头")= True Then 
+			去点击 "升1石头"
+			去升级这个建筑
+		End If
+		//升级粮食
+		If canFind(0,70,1200,800,"升2粮食")= True Then 
+			去点击 "升2粮食"
+			去升级这个建筑
+		End If
+		//升级仓库
+		If canFind(0,70,1200,800,"升6仓库")= True Then 
+			去点击 "升6仓库"
+			去升级这个建筑
+		End If
+	去点击 "建筑界面军事"
+	
+	
+		//升级兵战武
+		If canFind(0,70,1200,800,"升8兵战武")= True Then 
+			去点击 "升8兵战武"
+			去升级这个建筑
+		End If
+		//升级升兵战谋
+		If canFind(0,70,1200,800,"升9兵战谋")= True Then 
+			去点击 "升9兵战谋"
+			去升级这个建筑
+		End If
+		//升级军舍
+		If canFind(0,70,1200,800,"升13军舍")= True Then 
+			去点击 "升13军舍"
+			去升级这个建筑
+		End If
+	去点击 "建筑界面守备"
+		
+//		lastCheckTime = lastCheckTime - 30
+//		TracePrint "lastCheckTime  ::"&lastCheckTime
+//		If lastCheckTime <= 0 Then 
+//			升级主城仓库 
+//			升级农场石头 
+//			升级可以升级的建筑 
+//			checkCount =checkCount+1
+//			lastCheckTime = 60 * checkCount
+//			TracePrint "下一次升级建筑时间:" & lastCheckTime
+//			全力征兵
+//		End If
+	
+		
+	
+End Sub
+
+Sub 领取任务奖励
+	TracePrint "领取任务奖励"
+	跳转回主界面 
+	点击主界面任务按钮 
+	
+	If canFind(0, 70, 1200, 800, "任务领取按钮") = True Then 
+		去点击 "任务领取按钮"
+	End If
+	
+	去点击 "支线任务按钮"
+	If canFind(0, 70, 1200, 800, "任务领取按钮") = True Then 
+		去点击 "任务领取按钮"
+	End If
+	
+	去点击 "主线任务按钮"
+	If canFind(0, 70, 1200, 800, "任务领取按钮") = True Then 
+		去点击 "任务领取按钮"
+	End If
 	
 End Sub
 
@@ -1831,8 +1954,12 @@ Sub main
 	
 	If 当前任务 = "扫荡" Then 
 		For 13
+			
+			补兵
 			扫荡 目标位置
-			Delay 120*1000
+			Delay 15000
+			扫荡 目标位置
+			Delay 60*1000
 		Next
 		当前任务 = "升级建筑"
 	End If
@@ -1842,6 +1969,11 @@ Sub main
 		For 10
 			延时占领 
 		Next
+	End If
+	
+	
+	If 当前任务 = "日常模式" Then 
+		日常主线程
 	End If
 	
 	
@@ -1863,4 +1995,11 @@ Sub main
 	
 	
 	
+End Sub
+
+
+Sub 日常主线程
+	全力征兵
+	升级建筑 
+	领取任务奖励
 End Sub
