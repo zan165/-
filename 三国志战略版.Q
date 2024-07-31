@@ -467,7 +467,7 @@ End Function
 
 Sub 去点击(位置)
 	Delay 1500
-	dm_ret = dm.FindPic(0,0,1174,757,"D:\ajjl\"& 位置 &".bmp","000000",0.9,0,intX,intY)
+	dm_ret = dm.FindPic(0,0,1178,758,"D:\ajjl\"& 位置 &".bmp","000000",0.9,0,intX,intY)
 	If intX >= 0 and intY >= 0 Then
     	TracePrint "找到"&位置
     	dm.moveTo intX, intY
@@ -1251,8 +1251,10 @@ Sub 点击招募按钮
 	
 End Sub
 
+
+
 Sub 点击返回按钮
-	dm_ret = dm.FindPic(1000,0,1190,150,"D:\ajjl\主返回.bmp||D:\ajjl\建筑返回.bmp||D:\ajjl\fhan3.bmp||D:\ajjl\fhan4.bmp||D:\ajjl\fhan5.bmp||D:\ajjl\fhan6.bmp||D:\ajjl\xan.bmp||D:\ajjl\x2an.bmp","000000",0.9,0,intX,intY)
+	dm_ret = dm.FindPic(1000,0,1190,150,"D:\ajjl\主返回.bmp||D:\ajjl\建筑返回.bmp||D:\ajjl\fhan3.bmp||D:\ajjl\fhan4.bmp||D:\ajjl\fhan5.bmp||D:\ajjl\xan.bmp||D:\ajjl\x2an.bmp","000000",0.9,0,intX,intY)
 	If intX >= 0 and intY >= 0 Then
     	TracePrint "找到返回按钮"
     	dm.moveTo intX, intY
@@ -1469,31 +1471,110 @@ Do
 TracePrint "。。。"
 	鼠标点击 590, 340
 	Delay 300
-	If canFind(0, 70, 1200, 650, "一木难扶") Then 
-		当前任务 = "日常模式"
+	
+//	触发新手引导结束
+
+
+
+	If canFind(0,70,1200,800,"一木难扶")= True Then 
 		去点击 "一木难扶"
 		LogStart "D:\a.log"
 		TracePrint "三国志战略版结束引导"
-		LogStop
+		LogStop 
+		当前任务 = "日常模式"
 		Exit Do
 	End If
+	
 	
 	If canFind(0,70,1200,800,"今日签到奖励确认按钮")= True Then 
 		去点击 "今日签到奖励确认按钮"
-		当前任务 = "日常模式"
-		去点击 "一木难扶"
 		LogStart "D:\a.log"
 		TracePrint "三国志战略版结束引导"
-		LogStop
+		LogStop 
+		当前任务 = "日常模式"
 		Exit Do
 	End If
+
+	If canFind(0,70,1200,800,"确认按钮")= True Then 
+		去点击 "确认按钮"
+	End If
+
+	If canFind(0,70,1200,800,"位置1下阵")= True Then 
+		去点击 "位置1下阵"
+	End If
+
+//	If canFind(0,70,1200,800,"士气")= True Then 
+//		去点击 "士气"
+//	End If
 	
-	If canFind(0,70,1200,650,"下一步")= True Then 
-		去点击 "下一步"
+	If canFind(0,70,1200,800,"确认行军")= True Then 
+		去点击 "确认行军"
 	End If
 	
-	If canFind(760,560,960,760,"主界面招募")= True Then 
-		去点击 "主界面招募"
+	If canFind(0,70,1200,800,"行军")= True Then 
+		去点击 "行军"
+	End If
+
+	If canFind(0,70,1200,800,"枪兵")= True Then 
+		去点击 "枪兵"
+	End If
+	
+	If canFind(0,70,1200,800,"兵种选择")= True Then 
+		去点击 "兵种选择"
+	End If
+	
+	If canFind(0,600,230,750,"编队界面兵力")= True Then 
+		去点击 "编队界面兵力"
+	End If
+	
+
+	If canFind(0,70,1200,800,"兵力")= True Then 
+		去点击 "兵力"
+	End If
+
+	If canFind(0,70,1200,800,"回城")= True Then 
+		去点击 "回城"
+	End If
+
+	If canFind(0,70,1200,800,"跳过")= True Then 
+		去点击 "跳过"
+	End If
+
+	If canFind(0,70,1200,800,"攻占按钮")= True Then 
+		去点击 "攻占按钮"
+	End If
+	
+	If canFind(0,70,1200,800,"攻占")= True Then 
+		去点击 "攻占"
+	End If
+
+	If canFind(0,600,1200,800,"确认分兵")= True Then 
+		去点击 "确认分兵"
+	End If
+
+	If canFind(0,650,1200,800,"快速分兵")= True Then 
+		去点击 "快速分兵"
+	End If
+	
+	If canFind(0,70,1200,650,"上阵")= True Then 
+		去点击 "上阵"
+	End If
+
+
+	If canFind(0,70,1200,650,"加号")= True Then 
+		去点击 "加号"
+	End If
+
+	If canFind(0,600,230,750,"编制")= True Then 
+		去点击 "编制"
+	End If
+	
+	If canFind(0,70,1200,650,"点击进入主城")= True Then 
+		进入主城
+	End If
+	
+	If canFind(0,70,1200,650,"选择主城")= True Then 
+		进入主城
 	End If
 	
 	If canFind(0,70,1200,650,"招募2次")= True Then 
@@ -1501,81 +1582,33 @@ TracePrint "。。。"
 		shouldChou = False
 	End If
 	
-	If canFind(0,70,1200,650,"选择主城")= True Then 
-		进入主城
-	End If
-	If canFind(0,70,1200,650,"点击进入主城")= True Then 
-		进入主城
+	If canFind(760,560,960,760,"主界面招募")= True Then 
+		去点击 "主界面招募"
 	End If
 	
-	If canFind(0,600,230,750,"编制")= True Then 
-		去点击 "编制"
-	End If
-	If canFind(0,70,1200,650,"编队界面兵力")= True Then 
-		去点击 "编队界面兵力"
-	End If
-	If canFind(0,70,1200,650,"加号")= True Then 
-		去点击 "加号"
-	End If
-	If canFind(0,70,1200,650,"上阵1")= True Then 
-		去点击 "上阵1"
-	End If
-	If canFind(0,70,1200,650,"上阵")= True Then 
-		去点击 "上阵"
-	End If
-	If canFind(0,650,1200,800,"快速分兵")= True Then 
-		去点击 "快速分兵"
-	End If
-	If canFind(0,600,1200,800,"确认分兵")= True Then 
-		去点击 "确认分兵"
-	End If
-	If canFind(0,70,1200,800,"gzan")= True Then 
-		去点击 "gzan"
-	End If
-	If canFind(0,70,1200,800,"攻占按钮")= True Then 
-		去点击 "攻占按钮"
-	End If
-	If canFind(0,70,1200,800,"跳过")= True Then 
-		去点击 "跳过"
-	End If
-	If canFind(0,70,1200,800,"回城")= True Then 
-		去点击 "回城"
-	End If
-	If canFind(0,70,1200,800,"兵力")= True Then 
-		去点击 "兵力"
-	End If
-	If canFind(0,70,1200,800,"上阵关平一队兵力")= True Then 
-		去点击 "上阵关平一队兵力"
+	If canFind(0,70,1200,650,"下一步")= True Then 
+		去点击 "下一步"
 	End If
 	
-	If canFind(0,70,1200,800,"兵种选择")= True Then 
-		去点击 "兵种选择"
-	End If
-	If canFind(0,70,1200,800,"枪兵")= True Then 
-		去点击 "枪兵"
-	End If
-	If canFind(0,70,1200,800,"行军")= True Then 
-		去点击 "行军"
-	End If
-	If canFind(0,70,1200,800,"士气")= True Then 
-		去点击 "士气"
-	End If
-	If canFind(0,70,1200,800,"确认行军")= True Then 
-		去点击 "确认行军"
-	End If
-	If canFind(0,70,1200,800,"位置1下阵")= True Then 
-		去点击 "位置1下阵"
-	End If
 	
-	If canFind(0,70,1200,800,"位置1下阵2")= True Then 
-		去点击 "位置1下阵2"
-	End If
-	If canFind(0,70,1200,800,"确认按钮")= True Then 
-		去点击 "确认按钮"
-	End If
-	If canFind(0,70,1200,800,"位置1下阵2")= True Then 
-		去点击 "位置1下阵2"
-	End If
+	
+	
+	
+//	If canFind(0,70,1200,650,"上阵1")= True Then 
+//		去点击 "上阵1"
+//	End If
+//	If canFind(0,70,1200,800,"上阵关平一队兵力")= True Then 
+//		去点击 "上阵关平一队兵力"
+//	End If
+
+
+//	
+//	If canFind(0,70,1200,800,"位置1下阵2")= True Then 
+//		去点击 "位置1下阵2"
+//	End If
+//	If canFind(0,70,1200,800,"位置1下阵2")= True Then 
+//		去点击 "位置1下阵2"
+//	End If
 	
 	
 	
@@ -1764,6 +1797,7 @@ End Sub
 
 
 Sub 日常免费抽
+
 	If canFind(0, 70, 1200, 800, "主界面招募红点") = True Then 
 		去点击 "主界面招募红点"
 	End If
@@ -2034,9 +2068,10 @@ End Sub
 
 
 Sub 日常主线程
-	获取主城信息
 	全力征兵
 	升级建筑 
 	领取任务奖励 
 	日常免费抽
+	获取主城信息
+	
 End Sub
