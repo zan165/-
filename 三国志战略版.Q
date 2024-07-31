@@ -1393,8 +1393,8 @@ Sub 获取主城信息
 	主界面点坐标 
 	
 	
-	
-	While isFindZhuCheng = False
+
+	 isFindZhuCheng = False
 	
 		//调用ocr
 		txt = Plugin.ZXLOCR.TTOCR(950,100,1100,160, 0)
@@ -1413,7 +1413,7 @@ Sub 获取主城信息
 		End If
 		TracePrint 主城坐标(0)
 		 TracePrint 主城坐标(1)
-	Wend
+	
 	
 	
 End Sub
@@ -1768,6 +1768,7 @@ Sub 日常免费抽
 		去点击 "主界面招募红点"
 	End If
 	
+	Delay 2100
 	If canFind(0, 70, 1200, 800, "免费招募一次") = True Then 
 		
 		去点击 "免费招募一次"
