@@ -34,12 +34,12 @@ Dim isFindWindow //是否打开窗口
 isFindWindow = 0
 Dim hwnd, dm_ret
 Dim 当前界面
+
 Dim	当前任务,用铜币升级建筑
 	当前任务 = "日常模式"
 	用铜币升级建筑 = false
-Dim presentLevel
-Dim presentOwn
-Dim presentEnemy
+	
+	
 Dim 主城坐标(1)
 Dim 当前坐标(1)
 Dim 铺路队伍
@@ -69,10 +69,8 @@ Dim 缓存土地敌人信息
 Dim 缓存土地守卫信息
 	缓存土地守卫信息="D:\ajjl\缓存土地守卫信息.ini"
 
-
-Dim 第几次升级建筑
-
-第几次升级建筑 = 0
+Dim 金珠, 铜币, 名声, 势力, 木材产量, 铁矿产量, 石料产量, 粮食产量
+Dim 领地(1),策书(1),木材(1),铁矿(1),石料(1),粮食(1)
 
 
 Call main
@@ -779,7 +777,8 @@ Sub 跳转回主界面
 	判断当前界面
 	If 当前界面 = "主界面" Then 
 		TracePrint "已返回主界面"
-		
+		获取主城信息 
+		获取资源信息
 	Else 
 		TracePrint "不在主界面，需要跳转回主界面"
 		跳转回主界面
@@ -1391,33 +1390,115 @@ End Sub
 
 
 Sub 获取主城信息
-	跳转回主界面
-	主界面点坐标 
-	
-	
 
-	 isFindZhuCheng = False
-	
-		//调用ocr
-		txt = Plugin.ZXLOCR.TTOCR(950,100,1100,160, 0)
-		TracePrint txt
-		//部队地标星内3/3(511,1459
-		
-		
-		 抓取坐标 txt
-		 
-		 
-		If 当前坐标(0) <> 0 and 当前坐标(1) <> 0 Then 
-			isFindZhuCheng = true
-			主城坐标(0) = 当前坐标(0)
-			主城坐标(1) = 当前坐标(1)
+	If isFindZhuCheng = False then
+		If 当前界面 = "主界面" Then 
+				
 			
+			
+			主界面点坐标 
+		
+		
+		
+			//调用ocr
+			txt = Plugin.ZXLOCR.TTOCR(950,100,1100,160, 0)
+			TracePrint txt
+			//部队地标星内3/3(511,1459
+			
+			
+		 	抓取坐标 txt
+		 	
+		 	
+			If 当前坐标(0) <> 0 and 当前坐标(1) <> 0 Then 
+				isFindZhuCheng = true
+				主城坐标(0) = 当前坐标(0)
+				主城坐标(1) = 当前坐标(1)
+				
+			End If
+			TracePrint 主城坐标(0)
+		 	TracePrint 主城坐标(1)
 		End If
-		TracePrint 主城坐标(0)
-		 TracePrint 主城坐标(1)
+	End If
 	
-	
-	
+End Sub
+
+Sub 获取资源信息
+Delay 500
+	If 当前界面 = "主界面" Then 
+			TracePrint "获取资源信息" 
+			//TODO
+			Dim txt1
+			
+			
+			
+			
+			
+			//all
+			txt1 = Plugin.ZXLOCR.TTOCR(74, 3, 1112, 49, 0)
+			TracePrint "all"& txt1
+			
+			//金珠
+			txt1 = Plugin.ZXLOCR.TTOCR(278, 57, 350, 80, 0)
+			TracePrint "金珠"& txt1
+			
+			
+//			//铜币
+//			txt1 = Plugin.ZXLOCR.TTOCR(515, 57, 590, 80, 0)
+//			TracePrint "铜币"& txt1
+//			
+//			//名声
+//			txt1 = Plugin.ZXLOCR.TTOCR(134, 88, 210, 109, 0)
+//			TracePrint "名声" & txt1
+//			
+//			//领地
+//			txt1 = Plugin.ZXLOCR.TTOCR(311, 88, 400, 109, 0)
+//			TracePrint "领地" & txt1
+//
+//			//势力
+//			txt1 = Plugin.ZXLOCR.TTOCR(490, 88, 590, 109, 0)
+//			TracePrint "势力" & txt1
+//			
+//			
+//			
+//			//木材产量
+//			txt1 = Plugin.ZXLOCR.TTOCR(702, 57, 763, 80, 0)
+//			TracePrint "木材产量" & txt1
+//			
+//			//木材
+//			txt1 = Plugin.ZXLOCR.TTOCR(622, 88, 763, 109, 0)
+//			TracePrint "木材" & txt1
+//			
+//			//铁矿产量
+//			txt1 = Plugin.ZXLOCR.TTOCR(852, 57, 912, 80, 0)
+//			TracePrint "铁矿产量" & txt1
+//
+//			//铁矿
+//			txt1 = Plugin.ZXLOCR.TTOCR(769, 88, 912, 109, 0)
+//			TracePrint "铁矿" & txt1
+//
+//			//石料产量
+//			txt1 = Plugin.ZXLOCR.TTOCR(1001, 57, 1057, 80, 0)
+//			TracePrint "石料产量" & txt1
+//
+//			//石料
+//			txt1 = Plugin.ZXLOCR.TTOCR(917, 88, 1057, 109, 0)
+//			TracePrint "石料" & txt1
+//			
+//			//粮食产量
+//			txt1 = Plugin.ZXLOCR.TTOCR(1147, 57, 1207, 80, 0)
+//			TracePrint "粮食产量" & txt1
+//
+//			//粮食
+//			txt1 = Plugin.ZXLOCR.TTOCR(1065, 88, 1207, 109, 0)
+//			TracePrint "粮食" & txt1
+//			
+//			//策书
+//			txt1 = Plugin.ZXLOCR.TTOCR(132, 182, 184, 199, 0)
+//			TracePrint "策书" & txt1
+			
+			
+			
+	End If
 End Sub
 
 Sub 获取队伍兵力
@@ -2098,6 +2179,7 @@ Sub 日常主线程
 //	升级建筑 
 //	领取任务奖励 
 //	日常免费抽
-	获取主城信息
+	获取主城信息 
+	
 	获取队伍兵力
 End Sub
