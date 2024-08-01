@@ -1420,6 +1420,32 @@ Sub 获取主城信息
 	
 End Sub
 
+Sub 获取队伍兵力
+	进入主城 
+	去点击 "队伍编号一"
+	txt = Plugin.ZXLOCR.TTOCR(50,240,190,280, 0)
+		TracePrint txt
+		
+	TracePrint "队伍一兵力"
+	TracePrint txt
+	
+	点击返回按钮
+	
+	去点击 "队伍编号二"
+	txt = Plugin.ZXLOCR.TTOCR(50,240,190,280, 0)
+		TracePrint txt
+	Dim team1
+		team1 = Split(txt, "/", - 1 , 1)
+		TracePrint "team1"& team1(0)
+		
+	TracePrint "队伍二兵力"
+	TracePrint txt
+	
+	Dim team2
+		team2 = Split(txt, "/", - 1 , 1)
+		TracePrint "team2"& team2(0)
+End Sub
+
 Sub 抓取坐标(txt)
 		当前坐标(0) = 0
 		当前坐标(1) = 0
@@ -2069,9 +2095,9 @@ End Sub
 
 Sub 日常主线程
 	全力征兵
-	升级建筑 
-	领取任务奖励 
-	日常免费抽
+//	升级建筑 
+//	领取任务奖励 
+//	日常免费抽
 	获取主城信息
-	
+	获取队伍兵力
 End Sub
