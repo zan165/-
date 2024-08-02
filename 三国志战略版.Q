@@ -1434,67 +1434,64 @@ Delay 500
 			
 			
 			//all
-			txt1 = Plugin.ZXLOCR.TTOCR(74, 3, 1112, 49, 0)
-			TracePrint "all"& txt1
-			
-			//金珠
-			txt1 = Plugin.ZXLOCR.TTOCR(278, 57, 350, 80, 0)
+			txt1 = Plugin.ZXLOCR.TTOCR(310, 3, 377, 26, 0)
 			TracePrint "金珠"& txt1
 			
 			
-//			//铜币
-//			txt1 = Plugin.ZXLOCR.TTOCR(515, 57, 590, 80, 0)
-//			TracePrint "铜币"& txt1
-//			
-//			//名声
-//			txt1 = Plugin.ZXLOCR.TTOCR(134, 88, 210, 109, 0)
-//			TracePrint "名声" & txt1
-//			
-//			//领地
-//			txt1 = Plugin.ZXLOCR.TTOCR(311, 88, 400, 109, 0)
-//			TracePrint "领地" & txt1
-//
-//			//势力
-//			txt1 = Plugin.ZXLOCR.TTOCR(490, 88, 590, 109, 0)
-//			TracePrint "势力" & txt1
-//			
-//			
-//			
-//			//木材产量
-//			txt1 = Plugin.ZXLOCR.TTOCR(702, 57, 763, 80, 0)
-//			TracePrint "木材产量" & txt1
-//			
-//			//木材
-//			txt1 = Plugin.ZXLOCR.TTOCR(622, 88, 763, 109, 0)
-//			TracePrint "木材" & txt1
-//			
-//			//铁矿产量
-//			txt1 = Plugin.ZXLOCR.TTOCR(852, 57, 912, 80, 0)
-//			TracePrint "铁矿产量" & txt1
-//
-//			//铁矿
-//			txt1 = Plugin.ZXLOCR.TTOCR(769, 88, 912, 109, 0)
-//			TracePrint "铁矿" & txt1
-//
-//			//石料产量
-//			txt1 = Plugin.ZXLOCR.TTOCR(1001, 57, 1057, 80, 0)
-//			TracePrint "石料产量" & txt1
-//
-//			//石料
-//			txt1 = Plugin.ZXLOCR.TTOCR(917, 88, 1057, 109, 0)
-//			TracePrint "石料" & txt1
-//			
-//			//粮食产量
-//			txt1 = Plugin.ZXLOCR.TTOCR(1147, 57, 1207, 80, 0)
-//			TracePrint "粮食产量" & txt1
-//
-//			//粮食
-//			txt1 = Plugin.ZXLOCR.TTOCR(1065, 88, 1207, 109, 0)
-//			TracePrint "粮食" & txt1
-//			
-//			//策书
-//			txt1 = Plugin.ZXLOCR.TTOCR(132, 182, 184, 199, 0)
-//			TracePrint "策书" & txt1
+			
+			//铜币
+			txt1 = Plugin.ZXLOCR.TTOCR(472, 3, 540, 26, 0)
+			TracePrint "铜币"& txt1
+			
+			//名声
+			txt1 = Plugin.ZXLOCR.TTOCR(122, 30, 210, 49, 0)
+			TracePrint "名声" & txt1
+			
+			//领地
+			txt1 = Plugin.ZXLOCR.TTOCR(284, 30, 375, 49, 0)
+			TracePrint "领地" & txt1
+
+			//势力
+			txt1 = Plugin.ZXLOCR.TTOCR(448, 30, 540, 49, 0)
+			TracePrint "势力" & txt1
+			
+			
+			
+			//木材产量
+			txt1 = Plugin.ZXLOCR.TTOCR(594, 3, 700, 26, 0)
+			TracePrint "木材产量" & txt1
+			
+			//木材
+			txt1 = Plugin.ZXLOCR.TTOCR(574,30,704,49, 0)
+			TracePrint "木材" & txt1
+			
+			//铁矿产量
+			txt1 = Plugin.ZXLOCR.TTOCR(730, 3, 840, 26, 0)
+			TracePrint "铁矿产量" & txt1
+
+			//铁矿
+			txt1 = Plugin.ZXLOCR.TTOCR(710,30,841,49, 0)
+			TracePrint "铁矿" & txt1
+
+			//石料产量
+			txt1 = Plugin.ZXLOCR.TTOCR(866, 3, 973, 26, 0)
+			TracePrint "石料产量" & txt1
+
+			//石料
+			txt1 = Plugin.ZXLOCR.TTOCR(848,30,975,49, 0)
+			TracePrint "石料" & txt1
+			
+			//粮食产量
+			txt1 = Plugin.ZXLOCR.TTOCR(1004, 3, 1112, 26, 0)
+			TracePrint "粮食产量" & txt1
+
+			//粮食
+			txt1 = Plugin.ZXLOCR.TTOCR(982,30,1114,49, 0)
+			TracePrint "粮食" & txt1
+			
+			//策书
+			txt1 = Plugin.ZXLOCR.TTOCR(116,117,166,136, 0)
+			TracePrint "策书" & txt1
 			
 			
 			
@@ -1545,9 +1542,15 @@ Sub 抓取坐标(txt)
     		TracePrint 当前坐标(0)    		
     		TracePrint 当前坐标(1)    		
     		
-    	Else 
-     		TracePrint "没有抓取到坐标"
-    	
+    	ElseIf position1 = 0 and position > 0 and position2 > position Then
+    		position1 = Len(txt)
+    		当前坐标(0) = Mid(txt, position + 1, position2 - position - 1)
+        	当前坐标(1) = Mid(txt, position2 + 1, position1 - position2 - 1)
+        	
+    		TracePrint 当前坐标(0)    		
+    		TracePrint 当前坐标(1)
+     	Else
+    		TracePrint "没有抓取到坐标"
 		End If
 	
 End Sub
@@ -1845,6 +1848,19 @@ Sub 升级建筑
 			去点击 "升6仓库"
 			去升级这个建筑
 		End If
+		//升级冶铁台
+		If canFind(0,70,1200,800,"升3冶铁")= True Then 
+			去点击 "升3冶铁"
+			去升级这个建筑
+		End If
+		//升级木材
+		If canFind(0,70,1200,800,"升4木材")= True Then 
+			去点击 "升4木材"
+			去升级这个建筑
+		End If
+		
+		
+		
 	去点击 "建筑界面军事"
 	
 	
@@ -1858,11 +1874,27 @@ Sub 升级建筑
 			去点击 "升9兵战谋"
 			去升级这个建筑
 		End If
+		//升级战防
+		If canFind(0,70,1200,800,"升10战防")= True Then 
+			去点击 "升10战防"
+			去升级这个建筑
+		End If
+		//升级战速
+		If canFind(0,70,1200,800,"升11战速")= True Then 
+			去点击 "升11战速"
+			去升级这个建筑
+		End If
+		//升级征兵处
+		If canFind(0,70,1200,800,"升12征兵处")= True Then 
+			去点击 "升12征兵处"
+			去升级这个建筑
+		End If
 		//升级军舍
 		If canFind(0,70,1200,800,"升13军舍")= True Then 
 			去点击 "升13军舍"
 			去升级这个建筑
 		End If
+		
 	去点击 "建筑界面守备"
 		
 //		lastCheckTime = lastCheckTime - 30
@@ -2176,10 +2208,10 @@ End Sub
 
 Sub 日常主线程
 	全力征兵
-//	升级建筑 
-//	领取任务奖励 
-//	日常免费抽
+	升级建筑 
+	领取任务奖励 
+	日常免费抽
 	获取主城信息 
 	
-	获取队伍兵力
+//	获取队伍兵力
 End Sub
