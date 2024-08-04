@@ -70,8 +70,21 @@ Dim 缓存土地守卫信息
 	缓存土地守卫信息="D:\ajjl\缓存土地守卫信息.ini"
 
 Dim 金珠, 铜币, 名声, 势力, 木材产量, 铁矿产量, 石料产量, 粮食产量
-Dim 领地(1),策书(1),木材(1),铁矿(1),石料(1),粮食(1)
+Dim 领地, 策书, 木材, 铁矿, 石料, 粮食
+Dim 队伍1,队伍2
 
+
+Dim 当前步数,当前打地等级
+当前步数 = 0
+当前打地等级 = - 1 
+
+Dim 要扫地的数量
+要扫的数量 = 0
+Dim 要打的地
+
+Dim 所有土地,分城占地,主城占地
+	所有土地 = Array()
+	主城占地 =Array(Array(0,0),Array(0,0),Array(0,0),Array(0,0),Array(0,0),Array(0,0),Array(0,0),Array(0,0),Array(0,0),Array(0,0),Array(0,0))
 
 Call main
 
@@ -339,16 +352,16 @@ End Function
 
 
 
-Function 读取敌人信息(Command,Val)
+Function 读取土地归属信息(Command,Val)
 	//下面这句是读取一个配置文件参数(小节名："Command" 键值名："Val")得到内容(Text )
-	Text = 读取(Command, Val, 缓存土地敌人信息)
+	Text = 读取(Command, Val, 土地归属)
 	TracePrint "读取土地信息键值为：" & Text
 	读取敌人信息 = Text
 End Function
 
-Function 写入敌人信息(Command,Val,内容)
+Function 写入土地归属信息(Command,Val,内容)
 	//下面这句是保存一个配置文件参数(小节名："Command" 键值名："Val" 写入内容："内容")
-	Call 写入(Command, Val, 内容, 缓存土地敌人信息)
+	Call 写入(Command, Val, 内容, 土地归属)
 	TracePrint "保存一个配置文件键值"
 	
 End Function
@@ -835,7 +848,9 @@ Sub 跳转到坐标(aimx, aimy)
     	
     Else 
     	TracePrint "没有找到地图按钮"
-    	
+    	跳转回主界面 
+    	跳转到坐标 aimx, aimy
+    	Exit Sub
 	End If
 	
 	Delay 1000
@@ -1116,13 +1131,14 @@ Function 获取位置信息(aimx, aimy)
 	地块主人 = null
 	地块兵种 = null
 	
+//	跳转到坐标 381, 1439
+	跳转到坐标 aimx, aimy
+	
 	txt= 读取土地信息(aimx , aimy)
 	
 	
 	
 	
-//	跳转到坐标 381, 1439
-	跳转到坐标 aimx, aimy
 	Delay 1000
 	If  txt <> "" Then 
 		
@@ -1130,9 +1146,9 @@ Function 获取位置信息(aimx, aimy)
 		
 	Else
 	
-			txt = Plugin.ZXLOCR.TTOCR(5, 76, 1176, 668, 0)
+			txt = Plugin.ZXLOCR.TTOCR(256,135,931,511, 0)
 			
-		//	TracePrint txt
+			TracePrint txt
 		
 			Dim 土地(12)
 			土地(0)="空地"
@@ -1163,27 +1179,53 @@ Function 获取位置信息(aimx, aimy)
 			index=index+1	
 			Next
 			If 地块等级 <= 10 Then 
-				写入土地信息 aimx,aimy,地块等级
+				写入土地信息 aimx, aimy, 地块等级
+			ElseIf 地块等级 > 10 Then
+				写入土地信息 aimx, aimy, 15
 			End If
 	End If
 	
 	If canFind(0, 70, 1200, 800, "扫荡") or canFind(0, 70, 1200, 800, "扫荡0") Then
-		地块主人 = 0
+		地块主人 = "自己"
 	ElseIf canFind(0, 70, 1200, 800, "入城" )or canFind(0, 70, 1200, 800, "筑城") Then
-		地块主人 = 0
-	ElseIf canFind(0, 70, 1200, 800, "敌人") Then
-		地块主人 = 2
-	ElseIf canFind(0, 70, 1200, 800, "侦查") Then
-		地块主人 = 3
-	ElseIf canFind(0, 70, 1200, 800, "gzan") Then
-		地块主人 = 3
+		地块主人 = "自己"
+	ElseIf canFind(0, 70, 1200, 800, "敌人") or  canFind(0, 70, 1200, 800, "敌人1") Then
+		地块主人 = "非盟友"
+	ElseIf canFind(0, 70, 1200, 800, "侦查") or canFind(0, 70, 1200, 800, "侦查1") Then
+		地块主人 = "无主之地"
 	ElseIf canFind(0, 70, 1200, 800, "情报") Then
-		地块主人 = 3
+		地块主人 = "无主之地"
 	ElseIf canFind(0, 70, 1200, 800, "不可侦查") Then
-		地块主人 = 3
+		地块主人 =  "无主之地"
 	ElseIf canFind(0, 70, 1200, 800, "盟友") Then
-		地块主人 = 1
+		地块主人 = "盟友"
 	End If
+	
+	写入土地归属信息 aimx, aimy, 地块主人
+	
+	
+	
+//	If canFind(0, 70, 1200, 800, "情报") Then
+//		去点击 "情报"
+//		Delay 500
+//		txt = Plugin.ZXLOCR.TTOCR(328,143,851,424, 0)
+//			
+//		TracePrint txt
+//		
+//		If InStr(txt, "盾兵") > 0 Then 
+//			地块兵种 = "盾兵"
+//		ElseIf InStr(txt, "弓兵") > 0 Then 
+//			地块兵种 = "弓兵"
+//		ElseIf InStr(txt, "骑兵") > 0 Then 
+//			地块兵种 = "骑兵"
+//		ElseIf InStr(txt, "枪兵") > 0 Then 
+//			地块兵种 = "枪兵"
+//		End If
+//		点击返回按钮 
+//		Delay 500
+//	End If
+	
+	
 	
 	
 	土地信息(0) = 地块主人
@@ -1193,6 +1235,17 @@ Function 获取位置信息(aimx, aimy)
 	
 	
 	获取位置信息 = 土地信息
+	
+	
+	TracePrint "获取位置信息"
+	
+	
+	TracePrint "地块主人 "& 地块主人  & " 地块等级 "&地块等级 & "地块兵种  "&地块兵种
+	If 地块等级 = 当前扫地等级 and 地块主人 = "无主之地" Then 
+		要扫地的数量 = 要扫地的数量 + 1
+		
+	End If
+	跳转回主界面 
 	
 End Function
 
@@ -1253,7 +1306,7 @@ End Sub
 
 
 Sub 点击返回按钮
-	dm_ret = dm.FindPic(1000,0,1190,150,"D:\ajjl\主返回.bmp||D:\ajjl\建筑返回.bmp||D:\ajjl\fhan3.bmp||D:\ajjl\fhan4.bmp||D:\ajjl\fhan5.bmp||D:\ajjl\xan.bmp||D:\ajjl\x2an.bmp","000000",0.9,0,intX,intY)
+	dm_ret = dm.FindPic(501,0,1181,199,"D:\ajjl\主返回.bmp||D:\ajjl\建筑返回.bmp||D:\ajjl\弹窗返回.bmp||D:\ajjl\fhan3.bmp||D:\ajjl\fhan4.bmp||D:\ajjl\fhan5.bmp||D:\ajjl\xan.bmp||D:\ajjl\x2an.bmp","000000",0.9,0,intX,intY)
 	If intX >= 0 and intY >= 0 Then
     	TracePrint "找到返回按钮"
     	dm.moveTo intX, intY
@@ -1361,32 +1414,6 @@ Sub 去升级这个建筑
 	End If
 End Sub
 
-//Sub 获取地块信息(x, y)
-//	跳转回主界面
-//	主界面点坐标 
-//	跳转到坐标 x, y
-//	
-//	While isFindZhuCheng = False
-//	
-//		//网络调用ocr
-//		txt = Plugin.ZXLOCR.QSOCR(4,63,1200,800, 0)
-//		TracePrint txt
-//		//部队地标星内3/3(511,1459
-//		
-//		
-//		 抓取坐标 txt
-//		 
-//		 
-//		If 当前坐标(0) <> 主城坐标(0) and 当前坐标(1) <> 主城坐标(1) Then 
-//			isFindZhuCheng = true
-//			
-//		End If
-//		TracePrint 当前坐标(0)
-//		 TracePrint 当前坐标(1)
-//	Wend
-//	
-//	
-//End Sub
 
 
 Sub 获取主城信息
@@ -1413,12 +1440,51 @@ Sub 获取主城信息
 				isFindZhuCheng = true
 				主城坐标(0) = 当前坐标(0)
 				主城坐标(1) = 当前坐标(1)
+				添加主城(主城坐标)
 				
 			End If
-			TracePrint 主城坐标(0)
-		 	TracePrint 主城坐标(1)
+				TracePrint 主城坐标(0)
+		 		TracePrint 主城坐标(1)
 		End If
 	End If
+	
+End Sub
+
+Sub 添加主城(pos)
+
+	主城占地(0) = Array(pos(0), pos(1))
+	
+	主城占地(1) = Array(pos(0), pos(1)-1)
+	
+	主城占地(2) = Array(pos(0), pos(1)+1)
+	
+	主城占地(3) = Array(pos(0)-1, pos(1)-1)
+	
+	主城占地(4) = Array(pos(0)-1, pos(1))
+	
+	主城占地(5) = Array(pos(0) - 1, pos(1) + 1)
+	
+	If pos(0) Mod 2 = 1 Then 
+		
+		TracePrint "pos===0000000000000000========= "&pos(0)
+		主城占地(6) = Array(pos(0) - 1, pos(1) + 2)
+		主城占地(10) = Array(pos(0) + 1, pos(1) + 2)
+	Else 
+		TracePrint "pos===111111111111111111========= "&pos(0)
+		主城占地(6) = Array(pos(0) - 1, pos(1) - 2)
+		主城占地(10) = Array(pos(0) + 1, pos(1) - 2)
+	End If
+	
+	
+	
+	
+	主城占地(7) = Array(pos(0)+1, pos(1)-1)
+	
+	主城占地(8) = Array(pos(0)+1, pos(1))
+	
+	主城占地(9) = Array(pos(0)+1, pos(1)+1)
+	
+	
 	
 End Sub
 
@@ -1450,7 +1516,7 @@ Delay 500
 			//领地
 			txt1 = Plugin.ZXLOCR.TTOCR(284, 30, 375, 49, 0)
 			TracePrint "领地" & txt1
-
+			领地 = Split(txt, "/", - 1 , 1)
 			//势力
 			txt1 = Plugin.ZXLOCR.TTOCR(448, 30, 540, 49, 0)
 			TracePrint "势力" & txt1
@@ -1464,6 +1530,7 @@ Delay 500
 			//木材
 			txt1 = Plugin.ZXLOCR.TTOCR(574,30,704,49, 0)
 			TracePrint "木材" & txt1
+			木材 = Split(txt, "/", - 1 , 1)
 			
 			//铁矿产量
 			txt1 = Plugin.ZXLOCR.TTOCR(730, 3, 840, 26, 0)
@@ -1472,7 +1539,8 @@ Delay 500
 			//铁矿
 			txt1 = Plugin.ZXLOCR.TTOCR(710,30,841,49, 0)
 			TracePrint "铁矿" & txt1
-
+			铁矿 = Split(txt, "/", - 1 , 1)
+			
 			//石料产量
 			txt1 = Plugin.ZXLOCR.TTOCR(866, 3, 973, 26, 0)
 			TracePrint "石料产量" & txt1
@@ -1480,6 +1548,8 @@ Delay 500
 			//石料
 			txt1 = Plugin.ZXLOCR.TTOCR(848,30,975,49, 0)
 			TracePrint "石料" & txt1
+			石料 = Split(txt, "/", - 1 , 1)
+			
 			
 			//粮食产量
 			txt1 = Plugin.ZXLOCR.TTOCR(1004, 3, 1112, 26, 0)
@@ -1488,10 +1558,13 @@ Delay 500
 			//粮食
 			txt1 = Plugin.ZXLOCR.TTOCR(982,30,1114,49, 0)
 			TracePrint "粮食" & txt1
+			粮食 = Split(txt, "/", - 1 , 1)
+			
 			
 			//策书
 			txt1 = Plugin.ZXLOCR.TTOCR(116,117,166,136, 0)
 			TracePrint "策书" & txt1
+			策书 = Split(txt, "/", - 1 , 1)
 			
 			
 			
@@ -1506,23 +1579,100 @@ Sub 获取队伍兵力
 		
 	TracePrint "队伍一兵力"
 	TracePrint txt
-	
+	队伍1 = Split(txt, "/", - 1 , 1)
+	If 队伍1(0) < 队伍1(1) Then 
+		去点击 "快速分兵"
+		去点击 "确认分兵"
+	End If
 	点击返回按钮
 	
 	去点击 "队伍编号二"
 	txt = Plugin.ZXLOCR.TTOCR(50,240,190,280, 0)
 		TracePrint txt
-	Dim team1
-		team1 = Split(txt, "/", - 1 , 1)
-		TracePrint "team1"& team1(0)
+
 		
 	TracePrint "队伍二兵力"
 	TracePrint txt
 	
-	Dim team2
-		team2 = Split(txt, "/", - 1 , 1)
-		TracePrint "team2"& team2(0)
+	队伍2 = Split(txt, "/", - 1 , 1)
+	If 队伍2(0) < 队伍2(1) Then 
+		去点击 "快速分兵"
+		去点击 "确认分兵"
+	End If
+	跳转回主界面
 End Sub
+
+Sub 扫地
+
+	Dim 打地信息(2)
+	
+	If 队伍1(1) < 800 Then 
+		当前扫地等级=2
+	ElseIf 队伍1(1) < 3000 Then
+		当前扫地等级=3
+	ElseIf 队伍1(1) < 6000 Then
+		当前扫地等级=4
+	ElseIf 队伍1(1) < 10400 Then
+		当前扫地等级=5
+	ElseIf 队伍1(1) < 12500 Then
+		当前扫地等级=6
+	ElseIf 队伍1(1) < 15700 Then
+		当前扫地等级=7
+	ElseIf 队伍1(1) < 22500 Then	
+		当前扫地等级=8
+	End If
+	Dim allPos, index
+	allPos=Array()
+	index=0
+	For row = -3 To 3 step 1
+		For col = -3 To 3 Step 1
+			Dim pos(1)
+			pos(0)=主城坐标(0)+row +当前步数
+			pos(1) = 主城坐标(1) + col +当前步数
+			
+			TracePrint "pos(0)  "&pos(0)&"pos(1)  "&pos(1)
+			
+			If isZhuCheng(pos) = False Then 
+				获取位置信息 pos(0),pos(1)
+			End If
+			
+			
+		Next
+	Next
+	TracePrint"............................"
+	TracePrint"............................"
+	TracePrint"............................"
+	TracePrint"............................"
+	TracePrint CStr(allPos)
+	
+	TracePrint"............................"
+	TracePrint"............................"
+	TracePrint"............................"
+End Sub
+
+
+
+Function isZhuCheng(pos)
+//	TracePrint "isZhuCheng"
+//	TracePrint pos(0)
+//	TracePrint pos(1)
+	
+	
+	isZhuCheng = false
+	Dim i 
+	For i = 0 To 10 step 1
+	
+//		TracePrint 主城占地(i)(0)
+//		TracePrint 主城占地(i)(1)
+		
+		If 主城占地(i)(0) = pos(0) and 主城占地(i)(1) =pos(1) Then 
+			isZhuCheng = true
+//			TracePrint ".....true...."
+			Exit For
+		End If
+	Next 
+	
+End Function
 
 Sub 抓取坐标(txt)
 		当前坐标(0) = 0
@@ -1532,6 +1682,11 @@ Sub 抓取坐标(txt)
  		position1 = InStr(txt, ")")
  		
  		position2 = InStr(txt, ",")
+ 		
+ 		If position2 = 0 Then 
+ 			position2 = InStr(txt, ".")
+ 		End If
+ 		
  		
  		TracePrint "position == " & position & "  position1 == " & position1 &"  position2== "&position2
  		
@@ -2194,7 +2349,6 @@ Sub main
 
 	
 //	获取主城信息 
-//	获取地块信息 507,1459
 	
 //	//网络调用ocr
 //	txt = Plugin.ZXLOCR.QSOCR(951,63,1177,161, 0)
@@ -2207,11 +2361,13 @@ End Sub
 
 
 Sub 日常主线程
-	全力征兵
-	升级建筑 
-	领取任务奖励 
-	日常免费抽
-	获取主城信息 
+//	全力征兵
+//	升级建筑 
+//	领取任务奖励 
+//	日常免费抽
 	
-//	获取队伍兵力
+	获取队伍兵力 
+	扫地
+
+//	获取位置信息 1248,509
 End Sub
