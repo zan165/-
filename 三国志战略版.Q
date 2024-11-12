@@ -37,18 +37,36 @@ Dim 当前界面
 
 Dim 任务轮询数,当前轮询数
 Dim 任务列表(10)
-任务列表(0)="自动铺路"
-任务列表(1)="升级建筑"
-任务轮询数 =1
-当前轮询数=0
+任务列表(0) = "升级建筑"
+任务列表(1) = "自动征兵"
+任务列表(2) = "自动招募"
+任务列表(3) = "扫荡"
+ 
+任务轮询数 =4
+当前轮询数 = 0
 
+
+当前任务 = "扫荡"
+
+Dim 随机种子
+随机种子 =5
 
 Dim 当前任务, 用铜币升级建筑,占地时间
-	当前任务 = "自动铺路"
+	
 	用铜币升级建筑 = true
 	占地时间 = 600
 	
 	
+	
+	
+Dim 扫荡目标(1)
+
+扫荡目标(0) = 1133
+扫荡目标(1) = 1459
+//	
+//扫荡目标(0) = 1124
+//扫荡目标(1) = 1458
+//
 Dim 主城坐标(1)
 Dim 当前坐标(1)
 Dim 铺路队伍
@@ -59,67 +77,13 @@ Dim 铺路队(60)
 Dim 铺路2队(30)
 Dim 铺路3队(30)
 
-
-
-
-铺路队(0) = Array(154, 411, 0)
-
-铺路队(1) = Array(154, 410, 0)
-
-铺路队(2) = Array(154, 409, 0)
-
-铺路队(3) = Array(154, 408, 0)
-
-铺路队(4) = Array(154, 407, 0)
-
-铺路队(5) = Array(153, 408, 0)
-
-
-铺路队(6) = Array(155, 407, 0)
-
-铺路队(7) = Array(152, 409, 0)
-
-铺路队(8) = Array(152, 410, 0)
-
-铺路队(9) = Array(155, 406, 0)
-
-
-铺路队(10) = Array(153, 406, 0)
-
-铺路队(11) = Array(156, 408, 0)
-
-铺路队(12) = Array(157, 408, 0)
-
-
-铺路队(13) = Array(152, 406, 0)
-
-铺路队(14) = Array(152, 405, 0)
-
-铺路队(15) = Array(152, 404, 0)
-
-铺路队(16) = Array(152, 403, 0)
-
-铺路队(17) = Array(152, 402, 0)
-
-铺路队(18) = Array(152, 401, 0)
-
-铺路队(19) = Array(151, 402, 0)
-
-铺路队(20) = Array(150, 403, 0)
-
-铺路队(21) = Array(150, 402, 0)
-
-铺路队(22) = Array(153, 401, 0)
-
-铺路队(23) = Array(154, 401, 0)
-铺路队(24) = Array(154, 400, 0)
-铺路队(25) = Array(154, 399, 0)
-铺路队(26) = Array(154, 398, 0)
-铺路队(27) = Array(155, 399, 0)
-铺路队(28) = Array(155, 400, 0)
-铺路队(29) = Array(155, 401, 0)
-铺路队(30) = Array(156, 401, 0)
-
+铺路队(0)=Array(118,383,0)
+铺路队(1)=Array(118,382,0)
+铺路队(2)=Array(117,381,0)
+铺路队(3)=Array(116,381,0)
+铺路队(4)=Array(115,380,0)
+铺路队(5)=Array(114,380,0)
+铺路队(6)=Array(113,379,1)
 
 
 //-------------------------------
@@ -170,7 +134,7 @@ Dim 铺路3队(30)
 
 
 Dim 铺路长度,铺路2长度,铺路3长度
-	铺路长度 = 31
+	铺路长度 = 7
 	铺路2长度 = 8
 	铺路3长度 = 8
 	
@@ -180,25 +144,24 @@ Dim 铺路序号, 铺路序号2, 铺路序号3
 	铺路序号2 = 0
 	铺路序号3 = 0
 	
-	
-Dim 扫荡目标(1)
-
-	扫荡目标(0) = 585
-	扫荡目标(1) = 888
+Dim 放弃序号, 放弃序号2, 放弃序号3
+	放弃序号 = 0
+	放弃序号2 = 0
+	放弃序号3 = 0
 	
 Dim 扫荡行军时间
 	扫荡行军时间 = 60
 	
 	
 Dim 扫荡次数
-	扫荡次数 = 15
+	扫荡次数 = 1
 	
 铺路队伍 = 2
 
 
 Dim 目标位置(1)
-	目标位置(0) = 249
-	目标位置(1) = 929
+	目标位置(0) = 1124
+	目标位置(1) = 1458
 	
 	
 Dim 当前位置(1)
@@ -634,7 +597,9 @@ Sub 去点击(位置)
     	TracePrint "找到"&位置
     	dm.moveTo intX, intY
     	Delay 1000
-    	dm.leftclick 
+    	
+		dm.LeftClick
+
     	
     Else 
     	TracePrint "没有找到"&位置
@@ -681,6 +646,11 @@ Sub 鼠标点击(坐标X, 坐标Y)
 	Delay 50
 End Sub
 
+Sub 找到并点击(资源名)
+	If canFind(0, 70, 1200, 800, 资源名) = True Then 
+		去点击 资源名
+	End If
+End Sub
 
 
 //=====================================================================================================
@@ -933,6 +903,7 @@ Sub 判断当前任务
 	
 	TracePrint "当前任务名字是 "&当前任务
 End Sub
+ 
 
 
 Sub 跳转回主界面
@@ -1245,16 +1216,18 @@ Sub 进入主城
 	跳转回主界面 
 	
 	
-	///点主城
+	//点主城
 	If canFind(0, 70, 1200, 800, "zc") Then 
 	
 		Delay 1000
-		主界面home
-		去点击 "入城"
-	 
+		主界面home 
+		Delay 1000
+		点击入城按钮
+	 Else 
+	 	进入主城
 	End If
 	
-	当前界面 = "主城界面"
+	
 End Sub
 
 Sub 进入队伍(队伍名)
@@ -1282,7 +1255,7 @@ End Sub
 
 Sub 全力征兵
 	进入主城 
-	点击 "满征"
+	去点击 "满征"
 End Sub
 
 
@@ -1483,19 +1456,49 @@ Sub 获取地周围的几块地的信息(nowx, nowy)
 	
 End Sub
 
+Sub 自动免费招募
+	//免费招募一次
+	点击招募按钮 
+	Delay 1000
+	去点击 "免费招募一次"
+	Delay 1000
+	
+End Sub
+
+Sub 自动半价招募
+	//半价招募一次
+	点击招募按钮 
+	Delay 1000
+	去点击 "半价招募一次"
+	Delay 1000
+	
+End Sub
 
 Sub 点击招募按钮
 	If 当前界面 = "主界面" Then 
 		去点击 "主界面招募"
+		去点击 "主界面招募1"
 	End If
 	
 	
 End Sub
 
 
+Sub 点击入城按钮
+	dm_ret = dm.FindPic(0,0,1181,750,"D:\ajjl\入城.bmp||D:\ajjl\入城按钮.bmp||D:\ajjl\入城按钮2.bmp||D:\ajjl\入城按钮3.bmp","000000",0.9,0,intX,intY)
+	If intX >= 0 and intY >= 0 Then
+    	TracePrint "找到入城按钮"
+    	dm.moveTo intX, intY
+    	Delay 1000
+    	dm.leftclick
+    	
+    Else 
+    	TracePrint "没有找到入城按钮"	
+	End If
+End Sub
 
-Sub 点击返回按钮
-	dm_ret = dm.FindPic(0,0,1181,750,"D:\ajjl\聊天关闭按钮.bmp||D:\ajjl\筑城返回.bmp||D:\ajjl\地图返回.bmp||D:\ajjl\攻占返回.bmp||D:\ajjl\主返回.bmp||D:\ajjl\建筑返回.bmp||D:\ajjl\弹窗返回.bmp||D:\ajjl\fhan3.bmp||D:\ajjl\fhan4.bmp||D:\ajjl\fhan5.bmp||D:\ajjl\xan.bmp||D:\ajjl\x2an.bmp","000000",0.9,0,intX,intY)
+Sub 点击放弃按钮
+	dm_ret = dm.FindPic(0,0,1181,750,"D:\ajjl\放弃土地按钮.bmp||D:\ajjl\放弃土地按钮1.bmp","000000",0.9,0,intX,intY)
 	If intX >= 0 and intY >= 0 Then
     	TracePrint "找到返回按钮"
     	dm.moveTo intX, intY
@@ -1504,6 +1507,46 @@ Sub 点击返回按钮
     	
     Else 
     	TracePrint "没有找到返回按钮"	
+	End If
+End Sub
+
+Sub 点击返回按钮
+	dm_ret = dm.FindPic(0,0,1181,750,"D:\ajjl\主城返回.bmp||D:\ajjl\武将关闭.bmp||D:\ajjl\聊天关闭按钮.bmp||D:\ajjl\筑城返回1.bmp||D:\ajjl\筑城返回.bmp||D:\ajjl\筑城返回1.bmp||D:\ajjl\地图返回.bmp||D:\ajjl\攻占返回.bmp||D:\ajjl\主返回.bmp||D:\ajjl\建筑返回.bmp||D:\ajjl\弹窗返回.bmp||D:\ajjl\攻城返回.bmp||D:\ajjl\提示返回.bmp||D:\ajjl\部队配置返回.bmp||D:\ajjl\提示返回2.bmp||D:\ajjl\攻城确认返回.bmp||D:\ajjl\扫荡返回.bmp||D:\ajjl\征兵返回.bmp","000000",0.9,0,intX,intY)
+	If intX >= 0 and intY >= 0 Then
+    	TracePrint "找到返回按钮"
+    	dm.moveTo intX, intY
+    	Delay 1000
+    	dm.leftclick
+    	
+    Else 
+    	TracePrint "没有找到返回按钮"	
+	End If
+End Sub
+
+Sub 点击上阵按钮
+	dm_ret = dm.FindPic(0,0,1181,750,"D:\ajjl\上阵按钮.bmp||D:\ajjl\上阵按钮1.bmp||D:\ajjl\上阵按钮2.bmp||D:\ajjl\上阵按钮3.bmp||D:\ajjl\上阵按钮4.bmp||D:\ajjl\上阵按钮5.bmp||D:\ajjl\上阵按钮6.bmp","000000",0.9,0,intX,intY)
+	If intX >= 0 and intY >= 0 Then
+    	TracePrint "找到上阵按钮"
+    	dm.moveTo intX, intY
+    	Delay 1000
+    	dm.leftclick
+    	
+    Else 
+    	TracePrint "没有找到上阵按钮"	
+	End If
+End Sub
+
+
+Sub 点击确认按钮
+	dm_ret = dm.FindPic(0,0,1181,750,"D:\ajjl\移除部队确认.bmp||D:\ajjl\确认.bmp||D:\ajjl\确认按钮.bmp","000000",0.9,0,intX,intY)
+	If intX >= 0 and intY >= 0 Then
+    	TracePrint "找到确认按钮"
+    	dm.moveTo intX, intY
+    	Delay 1000
+    	dm.leftclick
+    	
+    Else 
+    	TracePrint "没有找到确认按钮"	
 	End If
 End Sub
 
@@ -2120,23 +2163,22 @@ Sub 补兵
 	TracePrint "补兵" 
 	进入主城
 	
-	For i = 0 To 1 Step 1
 	
-	Delay 500
+	Delay 1000
+	 
+	去点击 "补兵队伍1"
 	
+	去点击 "补兵队伍2"
 	
-	dm.moveTo 100+i*220, 685
-	dm.leftClick
 	Delay 500
 	点击 "快速分兵"
+	
+	Delay 1000
 	点击 "确认分兵"
 	
-	点击返回按钮
+	点击返回按钮 
+	
 	TracePrint "已经补充完"& i+1 &"队兵力"
-	
-	
-	Next
-	
 	
 	
 	点击 "满征" 
@@ -2156,7 +2198,7 @@ Sub 扫荡(位置)
 	去点击 "待命1"
 	
 	
-	去点击 "取消自动回城按钮"
+//	去点击 "取消自动回城按钮"
 	去点击 "确认扫荡"
 	去点击 "坚持"
 End Sub
@@ -2180,97 +2222,102 @@ Sub 升级建筑
 	dm.MoveR 10, 30
 	Delay 100
 		
+	Delay 1000
+	
+	
+//	//升级主城
+	
+	去点击 "升0"
+	去升级这个建筑
 		
-	
-	
-	//升级推荐升级的建筑
 	去点击 "建筑界面内政"
 	
-		//升级仓库
-		If canFind(0,70,1200,800,"推荐升级6")= True Then 
-			偏右下角点击 "推荐升级6"
-			去升级这个建筑
-		End If
-	去点击 "建筑界面军事"
-	去点击 "建筑界面守备"
-		
-		
-		
-		
-		
-		
-	//升级主城
-	If canFind(0,70,1200,800,"升0")= True Then 
-		去点击 "升0"
-		去升级这个建筑
-	End If
-		
-	//升级可以升级的建筑
-	去点击 "建筑界面内政"
+//	//升级民居
+	Delay 1000
+	去点击 "升5民居"
+	去升级这个建筑
 	
-		//升级石头
-		If canFind(0,70,1200,800,"升1石头")= True Then 
-			去点击 "升1石头"
-			去升级这个建筑
-		End If
-		//升级粮食
-		If canFind(0,70,1200,800,"升2粮食")= True Then 
-			去点击 "升2粮食"
-			去升级这个建筑
-		End If
-		//升级仓库
-		If canFind(0,70,1200,800,"升6仓库")= True Then 
-			去点击 "升6仓库"
-			去升级这个建筑
-		End If
-		//升级冶铁台
-		If canFind(0,70,1200,800,"升3冶铁")= True Then 
-			去点击 "升3冶铁"
-			去升级这个建筑
-		End If
-		//升级木材
-		If canFind(0,70,1200,800,"升4木材")= True Then 
-			去点击 "升4木材"
-			去升级这个建筑
-		End If
+	
+//	//升级石头
+	Delay 1000
+	去点击 "升1石头"
+	去升级这个建筑
+	
 		
-		
+//	//升级木材
+	Delay 1000
+	去点击 "升4木材"
+	去升级这个建筑
+	
+	
+//	//升级冶铁
+	Delay 1000
+	去点击 "升3冶铁"
+	去升级这个建筑
+	
+	
+//	//升级粮食
+	Delay 1000
+	去点击 "升2粮食"
+	去升级这个建筑
+	
+	
+//	//升级仓库
+	Delay 1000
+	去点击 "升6仓库"
+	去升级这个建筑
+	
+	
 		
 	去点击 "建筑界面军事"
 	
+	Delay 1000
 	
-		//升级兵战武
-		If canFind(0,70,1200,800,"升8兵战武")= True Then 
-			去点击 "升8兵战武"
-			去升级这个建筑
-		End If
-		//升级升兵战谋
-		If canFind(0,70,1200,800,"升9兵战谋")= True Then 
-			去点击 "升9兵战谋"
-			去升级这个建筑
-		End If
-		//升级战防
-		If canFind(0,70,1200,800,"升10战防")= True Then 
-			去点击 "升10战防"
-			去升级这个建筑
-		End If
-		//升级战速
-		If canFind(0,70,1200,800,"升11战速")= True Then 
-			去点击 "升11战速"
-			去升级这个建筑
-		End If
+	
 		//升级征兵处
-		If canFind(0,70,1200,800,"升12征兵处")= True Then 
 			去点击 "升12征兵处"
 			去升级这个建筑
-		End If
+		
+		//升级兵战武
+			去点击 "升8兵战武"
+			去升级这个建筑
+		//升级升兵战谋
+			去点击 "升9兵战谋"
+			去升级这个建筑
+		//升级战防
+			去点击 "升10战防"
+			去升级这个建筑
+		//升级战速
+			去点击 "升11战速"
+			去升级这个建筑
 		//升级军舍
-		If canFind(0,70,1200,800,"升13军舍")= True Then 
 			去点击 "升13军舍"
 			去升级这个建筑
-		End If
+		//升级点将台
+			去点击 "升14点将台"
+			去升级这个建筑
 		
+		//升级军师府
+			去点击 "升15军师府"
+			去升级这个建筑 
+			
 	去点击 "建筑界面守备"
+	
+		
+	Delay 1000
+	
+	//升31工程营
+		去点击 "升31工程营"
+		去升级这个建筑 
+		
+	
+	//升32军机营"	
+		去点击 "升32军机营"
+		去升级这个建筑 
+		
+	//升33城墙
+		去点击 "升33城墙"
+		去升级这个建筑 
 		
 //		lastCheckTime = lastCheckTime - 30
 //		TracePrint "lastCheckTime  ::"&lastCheckTime
@@ -2326,11 +2373,14 @@ Sub 日常免费抽
 	
 End Sub
 
+Sub 自动征兵
+	
+End Sub
 
 Sub 新自动铺路
 	TracePrint "开始自动铺路递归"
 	
-	If  铺路序号 <= 铺路长度+6 Then 
+	If  铺路序号 < 铺路长度 Then 
 		铺路 铺路队, 铺路序号
 		
 	End If
@@ -2349,20 +2399,7 @@ Sub 新自动铺路
 End Sub
 
 Sub 铺路(队列, 序号)
-	
-	If 队列(铺路序号-6)(2) =0  and 铺路序号 >= 6  Then 
-		跳转到坐标 队列(铺路序号-6)(0), 队列(铺路序号-6)(1)
-		Delay 500
-		去点击 "放弃土地按钮"
-		
-		去点击 "确认按钮"
-	End If
-	
-	If 铺路序号 >= 铺路长度 Then 
-		铺路序号 = 铺路序号 + 1
-		占地时间 = 300
-		Exit Sub
-	End If
+
 	TracePrint "iiiiiiiiiii  " & 铺路序号
 		跳转到坐标 队列(铺路序号)(0), 队列(铺路序号)(1)
 		Delay 2000
@@ -2383,16 +2420,59 @@ Sub 铺路(队列, 序号)
 
 				
 		 
-	If 队列(铺路序号-6)(2) =0  and 铺路序号 >= 6  Then 
-		跳转到坐标 队列(铺路序号-6)(0), 队列(铺路序号-6)(1)
-		Delay 500
-		去点击 "放弃土地按钮"
+	
 		
-		去点击 "确认按钮"
+		
+		
+End Sub
+
+
+Sub 去放弃铺路土地
+		
+		TracePrint "放弃序号  "& 放弃序号
+	If 铺路队(放弃序号)(2) = 1  Then 
+		放弃序号 =  + 1
+		TracePrint "这块土地不用放弃  放弃序号 +1 "
+		Exit Sub
+	End If	
+	If 放弃序号 >= 铺路长度 Then 
+	TracePrint "已经放弃所有的土地 "
+		Exit Sub
 	End If
+	
+	跳转到坐标 铺路队(放弃序号)(0), 铺路队(放弃序号)(1)
+	Delay 500
+	点击放弃按钮
 		
+	去点击 "确认按钮"
+	
+	跳转到坐标 铺路队(放弃序号)(0), 铺路队(放弃序号)(1)
+	
+	If canFind(0,70,1200,800,"放弃土地中")= True  Then 
+			放弃序号 = 放弃序号 + 1
+			TracePrint "找到 放弃土地中  放弃序号 加1"
+			
+		ElseIf canFind(0, 70, 1200, 800, "放弃土地中1") = True Then
+			放弃序号 = 放弃序号 + 1
+			TracePrint "找到 侦查  放弃序号 加1"
+				
+		ElseIf canFind(0, 70, 1200, 800, "侦查") = True Then
+			放弃序号 = 放弃序号 + 1
+			TracePrint "找到 侦查  放弃序号 加1"
+			
 		
-		
+		ElseIf canFind(0, 70, 1200, 800, "侦查1") = True Then
+			放弃序号 = 放弃序号 + 1
+			TracePrint "找到 侦查1  放弃序号 加1"
+			
+		ElseIf canFind(0, 70, 1200, 800, "侦查2") = True Then
+			放弃序号 = 放弃序号 + 1
+			TracePrint "找到 侦查2  放弃序号 加1"
+			
+		else
+			TracePrint "没有找到放弃土地中   也没有找到侦察"
+	End If
+	
 End Sub
 
 
@@ -2490,6 +2570,115 @@ Sub 自动铺路
 	
 	
 	
+	Sub 单兵碰瓷模式
+		随机种子 = (随机种子 + 1) mod 7
+		Dim sh
+		sh = 216+(随机种子 mod 7) *66
+		
+		TracePrint "当前y值为  "&sh
+		
+		TracePrint "随机种子   ----=====  " & 随机种子
+	
+		进入主城 
+		
+		Delay 1500
+		dm.moveTo 1024, 705
+		dm.leftclick 
+		
+		Delay 500
+		
+		去点击 "位置1下阵"
+		
+		去点击 "位置1下阵2"
+		
+		Delay 1000
+		
+		点击确认按钮
+		
+		Delay 1000
+		
+		
+		去点击 "位置1上阵"
+		Delay 660
+		去点击 "筛选按钮"
+		
+		Delay 188
+		去点击 "偏将"
+		Delay 500
+		去点击 "军士"
+		Delay 500
+		
+		点击返回按钮 
+		
+		Delay 1500
+		
+		鼠标点击 826, sh
+		Delay 550
+		鼠标点击 826,sh
+			
+		Delay 2000
+			
+		点击上阵按钮
+		
+
+
+		输入兵力数字1
+		
+		
+		去点击 "确认分兵"
+
+		跳转回主界面 
+		跳转到坐标 601, 899
+		
+		去点击 "攻城按钮"
+		去点击 "攻城图标"
+		
+		Delay 50
+		dm.moveTo 1024, 705
+		dm.leftclick 
+		
+		Delay 50
+		
+		
+		去点击 "确认攻城按钮"
+		
+		Delay 1000
+		去点击 "坚持"
+		
+		Delay 80000
+	End Sub
+	
+	
+	Sub 输入兵力数字1
+		Delay 1000
+		dm.moveto 422,572
+		Delay 1000
+    	dm.leftclick 
+    	Delay 500
+    	KeyDown "BackSpace", 1
+    	KeyUp "BackSpace", 1
+    	Delay 50
+    	KeyDown "BackSpace", 1
+    	KeyUp "BackSpace", 1
+    	Delay 50
+    	KeyDown "BackSpace", 1
+    	KeyUp "BackSpace", 1
+     	Delay 50
+    	KeyDown "BackSpace", 1
+    	KeyUp "BackSpace", 1
+     	Delay 50
+    	KeyDown "Delete", 1
+    	KeyUp "Delete", 1
+     	Delay 50
+    	KeyDown "Delete", 1
+    	KeyUp "Delete", 1
+     	Delay 50
+    	
+		Call Plugin.Bkgnd.SendString(hwnd,11)
+	
+		Delay 500
+
+	End Sub
 	
 	
 	Function getNextPoints(x, y, firstDirection)
@@ -2618,6 +2807,11 @@ Sub main
 			
 	End If
 	
+	If 当前任务 = "放弃土地" Then
+		去放弃铺路土地 
+	End If
+	
+	
 	
 	If 当前任务 = "延时占领" Then 
 		For 10
@@ -2635,19 +2829,35 @@ Sub main
 		命令模式
 	End If
 	
+	If 当前任务 = "单兵碰瓷" Then 
+		单兵碰瓷模式
+	End If
+	
+	
+	If 当前任务 = "自动征兵" Then 
+		全力征兵
+	End If
+	
+	If 当前任务 = "自动招募" Then 
+		跳转回主界面
+		自动免费招募
+		自动半价招募
+	End If
 	
 	
 	
-	
-	TracePrint "100秒后重新开始任务"
-	Delay 100000
-	
+	TracePrint "6秒后重新开始任务"
 	If 当前任务 = "新手引导" Then 
 		
 		Else 
 			当前轮询数 = 当前轮询数 + 1
 			当前任务=任务列表(当前轮询数 mod 任务轮询数)
-	End If 
+	End If
+	TracePrint "下次任务是 " & 当前任务
+	
+	Delay 60000
+	
+	
 	Loop
 	
 //	
